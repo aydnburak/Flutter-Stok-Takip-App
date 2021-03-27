@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "568766836417",
+    "project_id": "stok-app-cbf18",
+    "storage_bucket": "stok-app-cbf18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:568766836417:android:29438f891909204d6b2e40",
+        "android_client_info": {
+          "package_name": "com.burakaydin.stok_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "568766836417-05o4vtu06r35dkon4ddckm38tnjgij2d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcAVLBLV7Pke7-N1KxqyCd5av5up2bjmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "568766836417-05o4vtu06r35dkon4ddckm38tnjgij2d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
