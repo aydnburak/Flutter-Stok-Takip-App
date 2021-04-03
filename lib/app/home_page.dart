@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:scroll_snap_list/scroll_snap_list.dart';
+import 'package:stok_app/Components/drawer_menu.dart';
+import 'package:stok_app/Components/urun_card.dart';
+import 'package:stok_app/models/categories_model.dart';
+import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,27 +12,126 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<int> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  int selectedIndex = 0;
+  String? selectedFilter;
 
-  Widget _buildItemList(BuildContext context, int index) {
-    if (index == data.length)
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    return Container(
-      width: 150,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  @override
+  Widget build(BuildContext context) {
+    final _userModel = Provider.of<UserViewModel>(context);
+    return Scaffold(
+      drawer: DrawerMenu(),
+      drawerEnableOpenDragGesture: false,
+      appBar: AppBar(
+        title: Text("ERSAĞ"),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Column(
         children: [
-          Container(
-            color: Colors.yellow,
-            width: 150,
-            height: 200,
-            child: Center(
-              child: Text(
-                '${data[index]}',
-                style: TextStyle(fontSize: 50.0, color: Colors.black),
-              ),
+          _categorilerBolumu(),
+          _filtrelemeBolumu(),
+          _filterBaslikBolumu(),
+          _listelemeBolumu(),
+        ],
+      ),
+    );
+  }
+
+  _categorilerBolumu() {
+    return Container(
+      color: Colors.white54,
+      height: 60,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: CategoriesModel.categoriesModel.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.only(left: 5, right: 5),
+              margin: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
+              decoration: BoxDecoration(
+                  color: selectedIndex == index ? Colors.green : Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    selectedIndex != index
+                        ? BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
+                        : BoxShadow(),
+                  ]),
+              child: Center(
+                  child: Text(
+                CategoriesModel.categoriesModel[index].title!,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: selectedIndex == index ? Colors.white : Colors.black54),
+              )),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  _filtrelemeBolumu() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, top: 10, right: 20),
+      child: Row(
+        children: [
+          Text(
+            "Ürünlerimiz",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 25,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          Expanded(
+            child: Container(),
+          ),
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return CategoriesModel.categoriesModel[selectedIndex].filterList!
+                  .map((filtre) => PopupMenuItem(
+                        child: Text(filtre!),
+                        value: filtre,
+                      ))
+                  .toList();
+            },
+            onSelected: (value) {
+              setState(() {
+                if (value.toString() == "TÜMÜ") {
+                  selectedFilter = null;
+                } else {
+                  selectedFilter = value.toString();
+                }
+              });
+            },
+            child: Row(
+              children: <Widget>[
+                Text(
+                  "filtrele",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Icon(
+                  Icons.keyboard_arrow_down,
+                  //size: 15,
+                  color: Colors.grey,
+                ),
+              ],
             ),
           ),
         ],
@@ -37,46 +139,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final _userModel = Provider.of<UserViewModel>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Home Page"),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await _userModel.signOut();
-            },
+  _listelemeBolumu() {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        child: GridView.builder(
+          itemCount: UrunModel.urunListModel.length,
+          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          IconButton(
-              icon: Icon(Icons.account_box),
-              onPressed: () {
-                print(_userModel.kullanici.toString());
-              }),
-          Text(_userModel.kullanici!.email!),
-          Text(_userModel.kullanici!.name!),
-          Text(_userModel.kullanici!.userID!),
-          Expanded(
-              child: ScrollSnapList(
-            itemBuilder: _buildItemList,
-            itemSize: 150,
-            dynamicItemSize: true,
-            onReachEnd: () {
-              print('Done!');
-            },
-            itemCount: data.length,
-            onItemFocus: (int) {
-              print('deger : ' + int.toString());
-            },
-          )),
-        ],
+          itemBuilder: (context, index) => UrunCard(urunModel: UrunModel.urunListModel[index]),
+        ),
       ),
     );
+  }
+
+  _filterBaslikBolumu() {
+    return selectedFilter != null
+        ? Padding(
+            padding: EdgeInsets.only(left: 10, top: 10, right: 20),
+            child: Row(
+              children: <Widget>[
+                Text(
+                  selectedFilter!,
+                ),
+              ],
+            ),
+          )
+        : Container();
   }
 }

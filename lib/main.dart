@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.green,
-          backgroundColor: Colors.green.shade200,
+          backgroundColor: Colors.white54,
           buttonColor: Colors.green.shade800,
         ),
         home: LandingPage(),
