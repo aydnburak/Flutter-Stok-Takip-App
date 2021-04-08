@@ -46,16 +46,17 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
-  Future<void> signInWithEmailAndPassword(String email, String sifre) async {
-    _kullanici = await _userRepository.signInWithEmailAndPassword(email, sifre);
+  Future<void> signInWithEmailAndPassword(String uyeNo, String sifre) async {
+    _kullanici = await _userRepository.signInWithEmailAndPassword(uyeNo, sifre);
 
     if (_kullanici != null) {
       state = ViewState.Idle;
     }
   }
 
-  Future<void> createUserWithEmailAndPassword(String email, String sifre, String name) async {
-    _kullanici = await _userRepository.createUserWithEmailAndPassword(email, sifre, name);
+  Future<void> createUserWithEmailAndPassword(
+      String uyeNo, String sifre, String name) async {
+    _kullanici = await _userRepository.createUserWithEmailAndPassword(uyeNo, sifre, name);
 
     if (_kullanici != null) {
       state = ViewState.Idle;

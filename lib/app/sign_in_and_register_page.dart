@@ -15,7 +15,7 @@ class SignInAndRegisterPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInAndRegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _name, _email, _password, _errorText;
+  String? _name, _uyeNo, _password, _errorText;
   late String _buttonText, _linkText, _titleText;
   var _formType = FormType.Login;
   var _formDurum = FormDurum.Bos;
@@ -69,7 +69,9 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                             Text(
                               _titleText,
                               style: GoogleFonts.fanwoodText(
-                                  fontWeight: FontWeight.bold, fontSize: 50, color: Colors.green),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 50,
+                                  color: Colors.green),
                             ),
                             _formType != FormType.Login
                                 ? Padding(
@@ -95,10 +97,12 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                           hintText: 'Adınız Soyadınız',
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(16),
-                                              borderSide: BorderSide(color: Colors.green)),
+                                              borderSide:
+                                                  BorderSide(color: Colors.green)),
                                           focusedBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(16),
-                                              borderSide: BorderSide(color: Colors.green)),
+                                              borderSide:
+                                                  BorderSide(color: Colors.green)),
                                           errorBorder: OutlineInputBorder(
                                               borderRadius: BorderRadius.circular(16),
                                               borderSide: BorderSide(color: Colors.red)),
@@ -112,8 +116,8 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                               padding: const EdgeInsets.all(16.0),
                               child: TextFormField(
                                 keyboardType: TextInputType.emailAddress,
-                                onSaved: (girilenEmail) {
-                                  _email = girilenEmail;
+                                onSaved: (girilenUyeNo) {
+                                  _uyeNo = girilenUyeNo;
                                 },
                                 validator: (value) {
                                   if (value != null) {
@@ -163,7 +167,8 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                       icon: Icon(Icons.remove_red_eye_outlined),
                                       onPressed: () {
                                         setState(() {
-                                          _sifre = _sifre == Sifre.Off ? Sifre.On : Sifre.Off;
+                                          _sifre =
+                                              _sifre == Sifre.Off ? Sifre.On : Sifre.Off;
                                         });
                                       },
                                     ),
@@ -223,8 +228,8 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                 children: [
                                   Text(
                                     _linkText,
-                                    style:
-                                        TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                                    style: TextStyle(
+                                        color: Colors.black, fontWeight: FontWeight.bold),
                                   ),
                                   InkWell(
                                     onTap: () {
@@ -237,9 +242,12 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                       });
                                     },
                                     child: Text(
-                                      _formType == FormType.Login ? "Kayıt Ol" : "Giriş Yap",
+                                      _formType == FormType.Login
+                                          ? "Kayıt Ol"
+                                          : "Giriş Yap",
                                       style: TextStyle(
-                                          color: Colors.green, fontWeight: FontWeight.bold),
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ],
@@ -261,7 +269,9 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
 
   void durumDegis() {
     setState(() {
-      _formDurum == FormDurum.Bos ? _formDurum = FormDurum.Dolu : _formDurum = FormDurum.Bos;
+      _formDurum == FormDurum.Bos
+          ? _formDurum = FormDurum.Dolu
+          : _formDurum = FormDurum.Bos;
     });
   }
 
@@ -273,7 +283,7 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
       durumDegis();
       if (_formType == FormType.Login) {
         try {
-          await _userModel.signInWithEmailAndPassword(_email! + "@gmail.com", _password!);
+          await _userModel.signInWithEmailAndPassword(_uyeNo!, _password!);
         } catch (e) {
           _errorText = hata(e.toString());
           print("hata : " + e.toString());
@@ -281,8 +291,7 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
         }
       } else {
         try {
-          await _userModel.createUserWithEmailAndPassword(
-              _email! + "@gmail.com", _password!, _name!);
+          await _userModel.createUserWithEmailAndPassword(_uyeNo!, _password!, _name!);
         } catch (e) {
           _errorText = hata(e.toString());
           print("hata : " + e.toString());

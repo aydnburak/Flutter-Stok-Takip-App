@@ -21,8 +21,9 @@ class UserRepository {
     return await _firebaseAuthService.signOut();
   }
 
-  Future<Kullanici?> signInWithEmailAndPassword(String email, String sifre) async {
-    Kullanici? _kullanici = await _firebaseAuthService.signInWithEmailAndPassword(email, sifre);
+  Future<Kullanici?> signInWithEmailAndPassword(String uyeNo, String sifre) async {
+    Kullanici? _kullanici =
+        await _firebaseAuthService.signInWithEmailAndPassword(uyeNo, sifre);
 
     if (_kullanici != null) {
       return await _firebaseDbService.readUser(_kullanici.userID!);
@@ -31,10 +32,13 @@ class UserRepository {
     }
   }
 
-  Future<Kullanici?> createUserWithEmailAndPassword(String email, String sifre, String name) async {
-    Kullanici? _kullanici = await _firebaseAuthService.createUserWithEmailAndPassword(email, sifre);
+  Future<Kullanici?> createUserWithEmailAndPassword(
+      String uyeNo, String sifre, String name) async {
+    Kullanici? _kullanici =
+        await _firebaseAuthService.createUserWithEmailAndPassword(uyeNo, sifre);
     if (_kullanici != null) {
       _kullanici.name = name;
+      _kullanici.uyeNo = uyeNo;
       return await _firebaseDbService.saveUser(_kullanici);
     } else {
       return null;

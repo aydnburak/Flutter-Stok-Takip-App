@@ -17,8 +17,9 @@ class FirebaseAuthService {
     return await _firebaseAuth.signOut();
   }
 
-  Future<Kullanici?> signInWithEmailAndPassword(String email, String sifre) async {
-    UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: sifre);
+  Future<Kullanici?> signInWithEmailAndPassword(String uyeNo, String sifre) async {
+    UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(
+        email: uyeNo + "@gmail.com", password: sifre);
 
     if (sonuc.user != null) {
       return Kullanici(userID: sonuc.user!.uid, email: sonuc.user!.email);
@@ -27,8 +28,9 @@ class FirebaseAuthService {
     }
   }
 
-  Future<Kullanici?> createUserWithEmailAndPassword(String email, String sifre) async {
-    UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: sifre);
+  Future<Kullanici?> createUserWithEmailAndPassword(String uyeNo, String sifre) async {
+    UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: uyeNo + "@gmail.com", password: sifre);
     if (sonuc.user != null) {
       return Kullanici(userID: sonuc.user!.uid, email: sonuc.user!.email);
     } else {
