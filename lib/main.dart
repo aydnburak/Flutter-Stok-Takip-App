@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/app/landing_page.dart';
 import 'package:stok_app/locator.dart';
+import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 Future<void> main() async {
@@ -24,9 +25,8 @@ class _MyAppState extends State<MyApp> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (context) => UserViewModel(),
-        ),
+        ChangeNotifierProvider(create: (context) => UserViewModel()),
+        ChangeNotifierProvider(create: (context) => UrunViewModel()),
       ],
       child: MaterialApp(
         title: 'StokApp',

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:stok_app/Components/add_remove_button.dart';
 import 'package:stok_app/models/urun_model.dart';
 
 class DetayScreen extends StatefulWidget {
-  final UrunModel? urunListModel;
+  final Urun? urun;
 
-  DetayScreen({this.urunListModel});
+  DetayScreen({this.urun});
 
   @override
   _DetayScreenState createState() => _DetayScreenState();
 }
 
 class _DetayScreenState extends State<DetayScreen> {
+  int selectedIndex = 1;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,13 +29,13 @@ class _DetayScreenState extends State<DetayScreen> {
                           Container(
                             height: MediaQuery.of(context).size.height * 0.6,
                             child: Hero(
-                              tag: "${widget.urunListModel!.photoURL}",
+                              tag: "${widget.urun!.photoURL}",
                               child: Container(
                                 height: MediaQuery.of(context).size.height * 0.6,
                                 decoration: BoxDecoration(
                                   border: Border(bottom: BorderSide()),
                                   image: DecorationImage(
-                                    image: NetworkImage(widget.urunListModel!.photoURL!),
+                                    image: NetworkImage(widget.urun!.photoURL!),
                                   ),
                                 ),
                               ),
@@ -47,12 +49,14 @@ class _DetayScreenState extends State<DetayScreen> {
                                     iconSize: 30,
                                     icon: Icon(Icons.arrow_back),
                                     onPressed: () {
+                                      //selectedIndex = 1;
                                       Navigator.of(context).pop();
                                     }),
                                 Spacer(),
                                 Text(
-                                  "Kod:152",
-                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                  "Kod:" + widget.urun!.urunKodu!,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
                                 SizedBox(
                                   width: 10,
@@ -71,7 +75,8 @@ class _DetayScreenState extends State<DetayScreen> {
                                             blurRadius: 5,
                                             offset: Offset(0, -1))
                                       ],
-                                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(100)),
                                     ),
                                     child: Icon(
                                       Icons.favorite_border,
@@ -89,9 +94,30 @@ class _DetayScreenState extends State<DetayScreen> {
                           ),
                         ],
                       ),
-                      Text("ÜRÜN ADI"),
-                      Text("acıklama 1"),
-                      Text("acıklama 2"),
+                      SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          widget.urun!.adi!,
+                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          widget.urun!.aciklama1!,
+                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
+                        ),
+                      ),
+                      SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          widget.urun!.aciklama2!,
+                          style: TextStyle(fontWeight: FontWeight.w400, fontSize: 20),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -100,13 +126,29 @@ class _DetayScreenState extends State<DetayScreen> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))],
+                boxShadow: [
+                  BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
+                ],
               ),
               height: 60,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  AddRemoveButton(
+                    value: selectedIndex,
+                    remove: () {
+                      setState(() {
+                        if (selectedIndex != 1) selectedIndex--;
+                      });
+                    },
+                    add: () {
+                      setState(() {
+                        selectedIndex++;
+                      });
+                    },
+                  ),
                   ElevatedButton(onPressed: () {}, child: Text("Depoya Ekle")),
-                  ElevatedButton(onPressed: () {}, child: Text("İsteğe Ekle")),
+                  ElevatedButton(onPressed: () {}, child: Text("Sepete Ekle")),
                 ],
               ),
             ),

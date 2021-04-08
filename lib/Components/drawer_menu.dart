@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:stok_app/app/favoriler_page.dart';
 import 'package:stok_app/app/home_page.dart';
 import 'package:stok_app/app/istek_page.dart';
+import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/app/stok_page.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
@@ -59,6 +60,16 @@ class DrawerMenu extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => IstekPage(),
+                        ),
+                      );
+                    }),
+                drawerItem(
+                    icon: Icons.shopping_basket_outlined,
+                    text: "Sepet",
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => SepetPage(),
                         ),
                       );
                     }),

@@ -4,7 +4,7 @@ import 'package:stok_app/app/detay_screen.dart';
 import 'package:stok_app/models/urun_model.dart';
 
 class UrunCard extends StatelessWidget {
-  final UrunModel? urunModel;
+  final Urun? urunModel;
 
   UrunCard({this.urunModel});
 
@@ -15,7 +15,7 @@ class UrunCard extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => DetayScreen(
-              urunListModel: urunModel,
+              urun: urunModel,
             ),
           ),
         );
@@ -26,7 +26,9 @@ class UrunCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
-          boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0, -1), blurRadius: 10)],
+          boxShadow: [
+            BoxShadow(color: Colors.grey, offset: Offset(0, -1), blurRadius: 10)
+          ],
         ),
         child: Column(
           children: <Widget>[
@@ -35,8 +37,9 @@ class UrunCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Kod:" + urunModel!.kod!,
-                    style: TextStyle(fontWeight: FontWeight.w900, color: Colors.grey.shade600),
+                    "Kod:" + urunModel!.urunKodu!,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w900, color: Colors.grey.shade600),
                   ),
                   GestureDetector(
                     onTap: () {},
@@ -45,7 +48,8 @@ class UrunCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
-                          BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
+                          BoxShadow(
+                              color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
                         ],
                         borderRadius: BorderRadius.all(Radius.circular(100)),
                       ),
@@ -106,7 +110,7 @@ class UrunCard extends StatelessWidget {
               height: 40,
               child: Center(
                 child: AutoSizeText(
-                  "${urunModel!.name}",
+                  urunModel!.adi!,
                   style: TextStyle(
                     color: Colors.grey.shade800,
                   ),

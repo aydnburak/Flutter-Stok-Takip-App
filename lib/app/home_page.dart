@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/urun_card.dart';
+import 'package:stok_app/app/sepet_page.dart';
+import 'package:stok_app/app/splash_screen_page.dart';
 import 'package:stok_app/models/categories_model.dart';
-import 'package:stok_app/models/urun_model.dart';
-import 'package:stok_app/viewmodel/user_viewmodel.dart';
+import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,11 +14,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+  String? selectedAnaTip = "TEMİZLİK GRUBU";
   String? selectedFilter;
 
   @override
   Widget build(BuildContext context) {
-    final _userModel = Provider.of<UserViewModel>(context);
+    final _urunModel = Provider.of<UrunViewModel>(context);
     return Scaffold(
       drawer: DrawerMenu(),
       drawerEnableOpenDragGesture: false,
@@ -26,8 +28,14 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {},
+            icon: Icon(Icons.shopping_basket_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SepetPage(),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -36,13 +44,22 @@ class _HomePageState extends State<HomePage> {
           _categorilerBolumu(),
           _filtrelemeBolumu(),
           _filterBaslikBolumu(),
-          _listelemeBolumu(),
+          _urunModel.state == UrunState.Idle
+              ? _urunModel.urunler.isNotEmpty
+                  ? _listelemeBolumu()
+                  : _kullaniciYokUI()
+              : Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
         ],
       ),
     );
   }
 
   _categorilerBolumu() {
+    final _urunModel = Provider.of<UrunViewModel>(context);
     return Container(
       color: Colors.white54,
       height: 60,
@@ -54,6 +71,9 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               setState(() {
                 selectedIndex = index;
+                selectedAnaTip = CategoriesModel.anaTip[index];
+                selectedFilter = null;
+                _urunModel.getUrunler(selectedAnaTip, selectedFilter);
               });
             },
             child: Container(
@@ -65,7 +85,8 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     selectedIndex != index
-                        ? BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
+                        ? BoxShadow(
+                            color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
                         : BoxShadow(),
                   ]),
               child: Center(
@@ -83,6 +104,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _filtrelemeBolumu() {
+    final _urunModel = Provider.of<UrunViewModel>(context);
     return Padding(
       padding: EdgeInsets.only(left: 10, top: 10, right: 20),
       child: Row(
@@ -108,13 +130,12 @@ class _HomePageState extends State<HomePage> {
                   .toList();
             },
             onSelected: (value) {
-              setState(() {
-                if (value.toString() == "TÜMÜ") {
-                  selectedFilter = null;
-                } else {
-                  selectedFilter = value.toString();
-                }
-              });
+              if (value.toString() == "TÜMÜ") {
+                selectedFilter = null;
+              } else {
+                selectedFilter = value.toString();
+              }
+              _urunModel.getUrunler(selectedAnaTip, selectedFilter);
             },
             child: Row(
               children: <Widget>[
@@ -140,16 +161,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   _listelemeBolumu() {
+    final _urunModel = Provider.of<UrunViewModel>(context);
     return Expanded(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: GridView.builder(
-          itemCount: UrunModel.urunListModel.length,
+          itemCount: _urunModel.urunler.length,
           gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 0.75,
           ),
-          itemBuilder: (context, index) => UrunCard(urunModel: UrunModel.urunListModel[index]),
+          itemBuilder: (context, index) => UrunCard(urunModel: _urunModel.urunler[index]),
         ),
       ),
     );
@@ -168,5 +190,29 @@ class _HomePageState extends State<HomePage> {
             ),
           )
         : Container();
+  }
+
+  Widget _kullaniciYokUI() {
+    return Container(
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(
+              Icons.hourglass_empty,
+              color: Theme.of(context).primaryColor,
+              size: 120,
+            ),
+            Text(
+              "Ürün Yok",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 36),
+            )
+          ],
+        ),
+      ),
+      height: MediaQuery.of(context).size.height * 0.5,
+    );
   }
 }
