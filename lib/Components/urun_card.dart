@@ -1,7 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/app/detay_screen.dart';
 import 'package:stok_app/models/urun_model.dart';
+import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class UrunCard extends StatelessWidget {
   final Urun? urunModel;
@@ -10,12 +13,16 @@ class UrunCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _urunModel = Provider.of<UrunViewModel>(context);
+    bool _fav = _urunModel.searchFavoriler(urunModel!.urunID!);
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => DetayScreen(
               urun: urunModel,
+              fav: _fav,
             ),
           ),
         );
@@ -42,7 +49,13 @@ class UrunCard extends StatelessWidget {
                         fontWeight: FontWeight.w900, color: Colors.grey.shade600),
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      if (_fav) {
+                        _urunModel.deleteFavoriler(urunModel!.urunID!);
+                      } else {
+                        _urunModel.addFavoriler(urunModel!);
+                      }
+                    },
                     child: Container(
                       padding: EdgeInsets.all(3),
                       decoration: BoxDecoration(
@@ -54,9 +67,8 @@ class UrunCard extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(100)),
                       ),
                       child: Icon(
-                        Icons.favorite_border,
-                        //Icons.favorite,
-                        //color: Colors.green,
+                        _fav == false ? Icons.favorite_border : Icons.favorite,
+                        color: Colors.green,
                       ),
                     ),
                   ),
@@ -67,43 +79,12 @@ class UrunCard extends StatelessWidget {
               height: 5,
             ),
             Expanded(
-              child: Stack(
-                children: [
-                  Opacity(
-                    opacity: 0.2,
-                    child: Center(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade400,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(8),
-                          child: Container(
-                            height: 120,
-                            width: 120,
-                            decoration: BoxDecoration(
-                                color: Colors.green.shade400,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 2)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: Hero(
-                      tag: "${urunModel!.photoURL!}",
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(urunModel!.photoURL!),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              child: Hero(
+                tag: "${urunModel!.photoURL!}",
+                child: ExtendedImage.network(
+                  urunModel!.photoURL!,
+                  cache: true,
+                ),
               ),
             ),
             Container(

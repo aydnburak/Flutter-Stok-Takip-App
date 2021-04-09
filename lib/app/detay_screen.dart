@@ -1,11 +1,15 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/Components/add_remove_button.dart';
 import 'package:stok_app/models/urun_model.dart';
+import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class DetayScreen extends StatefulWidget {
   final Urun? urun;
+  bool? fav;
 
-  DetayScreen({this.urun});
+  DetayScreen({this.urun, this.fav});
 
   @override
   _DetayScreenState createState() => _DetayScreenState();
@@ -13,8 +17,10 @@ class DetayScreen extends StatefulWidget {
 
 class _DetayScreenState extends State<DetayScreen> {
   int selectedIndex = 1;
+
   @override
   Widget build(BuildContext context) {
+    final _urunModel = Provider.of<UrunViewModel>(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -34,8 +40,11 @@ class _DetayScreenState extends State<DetayScreen> {
                                 height: MediaQuery.of(context).size.height * 0.6,
                                 decoration: BoxDecoration(
                                   border: Border(bottom: BorderSide()),
-                                  image: DecorationImage(
-                                    image: NetworkImage(widget.urun!.photoURL!),
+                                ),
+                                child: Center(
+                                  child: ExtendedImage.network(
+                                    widget.urun!.photoURL!,
+                                    cache: true,
                                   ),
                                 ),
                               ),
@@ -49,7 +58,6 @@ class _DetayScreenState extends State<DetayScreen> {
                                     iconSize: 30,
                                     icon: Icon(Icons.arrow_back),
                                     onPressed: () {
-                                      //selectedIndex = 1;
                                       Navigator.of(context).pop();
                                     }),
                                 Spacer(),
@@ -63,7 +71,13 @@ class _DetayScreenState extends State<DetayScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    print("favladın");
+                                    if (widget.fav!) {
+                                      widget.fav = false;
+                                      _urunModel.deleteFavoriler(widget.urun!.urunID!);
+                                    } else {
+                                      widget.fav = true;
+                                      _urunModel.addFavoriler(widget.urun!);
+                                    }
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(3),
@@ -79,10 +93,11 @@ class _DetayScreenState extends State<DetayScreen> {
                                           BorderRadius.all(Radius.circular(100)),
                                     ),
                                     child: Icon(
-                                      Icons.favorite_border,
-                                      //Icons.favorite,
+                                      widget.fav == false
+                                          ? Icons.favorite_border
+                                          : Icons.favorite,
                                       size: 30,
-                                      //color: Colors.green,
+                                      color: Colors.green,
                                     ),
                                   ),
                                 ),

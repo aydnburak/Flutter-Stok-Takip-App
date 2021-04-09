@@ -6,6 +6,7 @@ import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/app/splash_screen_page.dart';
 import 'package:stok_app/models/categories_model.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
+import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -16,6 +17,17 @@ class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   String? selectedAnaTip = "TEMİZLİK GRUBU";
   String? selectedFilter;
+
+  @override
+  void initState() {
+    _favGetir();
+    super.initState();
+  }
+
+  void _favGetir() {
+    final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
+    _urunModel.getFavoriler();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +42,14 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.shopping_basket_outlined),
             onPressed: () {
+              setState(() {});
+              /*
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => SepetPage(),
                 ),
               );
+               */
             },
           ),
         ],

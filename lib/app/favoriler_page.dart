@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/urun_card.dart';
 import 'package:stok_app/models/categories_model.dart';
 import 'package:stok_app/models/urun_model.dart';
+import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class FavorilerPage extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class FavorilerPage extends StatefulWidget {
 
 class _FavorilerPageState extends State<FavorilerPage> {
   int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +27,7 @@ class _FavorilerPageState extends State<FavorilerPage> {
         children: [
           _categorilerBolumu(),
           _baslikBolumu(),
-          //_listelemeBolumu(),
+          _listelemeBolumu(),
         ],
       ),
     );
@@ -53,7 +56,8 @@ class _FavorilerPageState extends State<FavorilerPage> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     selectedIndex != index
-                        ? BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
+                        ? BoxShadow(
+                            color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
                         : BoxShadow(),
                   ]),
               child: Center(
@@ -88,21 +92,37 @@ class _FavorilerPageState extends State<FavorilerPage> {
     );
   }
 
-  /*
   _listelemeBolumu() {
+    final _urunModel = Provider.of<UrunViewModel>(context);
+    List<Urun> _favoriler = _favorileriVer(_urunModel.favoriUrunler);
     return Expanded(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: GridView.builder(
-          itemCount: Urun.urunListModel.length,
+          itemCount: _favoriler.length,
           gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 0.75,
           ),
-          itemBuilder: (context, index) => UrunCard(urunModel: Urun.urunListModel[index]),
+          itemBuilder: (context, index) => UrunCard(urunModel: _favoriler[index]),
         ),
       ),
     );
   }
-   */
+
+  List<Urun> _favorileriVer(List<Urun> favoriUrunler) {
+    List<Urun> donecekFavoriler = [];
+
+    if (selectedIndex != 0) {
+      for (Urun urun in favoriUrunler) {
+        if (urun.tip1 == CategoriesModel.anaTip[selectedIndex - 1]) {
+          donecekFavoriler.add(urun);
+        }
+      }
+
+      return donecekFavoriler;
+    } else {
+      return favoriUrunler;
+    }
+  }
 }

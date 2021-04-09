@@ -36,4 +36,20 @@ class UrunRepository {
     }
     return urunler;
   }
+
+  Future<void> addFavoriler(String userID, String urunID) async {
+    await _firebaseDbService.addFavoriler(userID, urunID);
+  }
+
+  Future<void> deleteFavoriler(String userID, String urunID) async {
+    await _firebaseDbService.deleteFavoriler(userID, urunID);
+  }
+
+  Future<bool> searchFavoriler(String userID, String urunID) async {
+    return await _firebaseDbService.searchFavoriler(userID, urunID);
+  }
+
+  Future<List<Urun>> getFavoriler(String userID) async {
+    return await _firebaseDbService.getFavoriler(userID);
+  }
 }

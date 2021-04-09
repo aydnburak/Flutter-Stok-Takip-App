@@ -60,4 +60,49 @@ class FirebaseDbService implements DbBase {
 
     return urunler;
   }
+
+  @override
+  Future<void> addFavoriler(String userID, String urunID) async {
+    await _firestore
+        .collection("favoriler")
+        .doc(userID + "--" + urunID)
+        .set({'userID': userID, 'urunID': urunID});
+  }
+
+  @override
+  Future<void> deleteFavoriler(String userID, String urunID) async {
+    await _firestore.collection("favoriler").doc(userID + "--" + urunID).delete();
+  }
+
+  @override
+  Future<List<Urun>> getFavoriler(String userID) async {
+    QuerySnapshot querySnapshot =
+        await _firestore.collection('favoriler').where('userID', isEqualTo: userID).get();
+
+    List<Urun> urunler = [];
+    if (querySnapshot.docs.isNotEmpty) {
+      for (DocumentSnapshot tekFavori in querySnapshot.docs) {
+        DocumentSnapshot documentSnapshot = await _firestore
+            .collection('products')
+            .doc(tekFavori.data()!['urunID'])
+            .get();
+
+        if (documentSnapshot.data() != null) {
+          urunler.add(Urun.fromMap(documentSnapshot.data()!));
+        }
+      }
+    }
+    return urunler;
+  }
+
+  @override
+  Future<bool> searchFavoriler(String userID, String urunID) async {
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('favoriler').doc(userID + "--" + urunID).get();
+    if (documentSnapshot.data() != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
