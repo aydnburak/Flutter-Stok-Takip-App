@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/urun_card.dart';
-import 'package:stok_app/app/sepet_page.dart';
-import 'package:stok_app/app/splash_screen_page.dart';
 import 'package:stok_app/models/categories_model.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
-import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,13 +17,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _favGetir();
-    super.initState();
-  }
-
-  void _favGetir() {
     final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
-    _urunModel.getFavoriler();
+    print("home page acıldı ");
+    if (!_urunModel.homeOpen) {
+      _urunModel.homeOpen = true;
+      _urunModel.getFavoriler();
+    }
+    super.initState();
   }
 
   @override
@@ -84,12 +81,10 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              setState(() {
-                selectedIndex = index;
-                selectedAnaTip = CategoriesModel.anaTip[index];
-                selectedFilter = null;
-                _urunModel.getUrunler(selectedAnaTip, selectedFilter);
-              });
+              selectedIndex = index;
+              selectedAnaTip = CategoriesModel.anaTip[index];
+              selectedFilter = null;
+              _urunModel.getUrunler(selectedAnaTip, selectedFilter);
             },
             child: Container(
               padding: EdgeInsets.only(left: 5, right: 5),

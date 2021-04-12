@@ -52,4 +52,24 @@ class UrunRepository {
   Future<List<Urun>> getFavoriler(String userID) async {
     return await _firebaseDbService.getFavoriler(userID);
   }
+
+  Future<void> addDepo(String userID, String urunID, int adet) async {
+    await _firebaseDbService.addDepo(userID, urunID, adet);
+  }
+
+  Future<void> deleteDepo(String userID, String urunID) async {
+    await _firebaseDbService.deleteDepo(userID, urunID);
+  }
+
+  Future<List<Urun>> getDepo(String userID) async {
+    return await _firebaseDbService.getDepo(userID);
+  }
+
+  Future<int> depoKontrol(Urun urun, String userID) async {
+    return await _firebaseDbService.depoKontrol(urun, userID);
+  }
+
+  Future<void> depoGuncelle(String userID, Urun yeniUrun, int selectedIndex) async {
+    await _firebaseDbService.depoGuncelle(userID, yeniUrun.urunID!, selectedIndex);
+  }
 }

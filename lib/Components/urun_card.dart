@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/app/detay_screen.dart';
 import 'package:stok_app/models/urun_model.dart';
@@ -18,6 +19,7 @@ class UrunCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        print("urun karta tıklandı");
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => DetayScreen(
@@ -43,6 +45,37 @@ class UrunCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  urunModel!.adet != null
+                      ? GestureDetector(
+                          onTap: () {
+                            Fluttertoast.showToast(
+                              backgroundColor: Colors.green,
+                              msg: "Siliniyor...",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              fontSize: 18.0,
+                            );
+                            _urunModel.deleteDepo(urunModel!.urunID!);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5,
+                                    offset: Offset(0, -1))
+                              ],
+                              borderRadius: BorderRadius.all(Radius.circular(100)),
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                        )
+                      : Container(),
                   Text(
                     "Kod:" + urunModel!.urunKodu!,
                     style: TextStyle(
@@ -98,6 +131,16 @@ class UrunCard extends StatelessWidget {
                 ),
               ),
             ),
+            urunModel!.adet != null
+                ? Container(
+                    margin: EdgeInsets.only(left: 20, right: 20),
+                    height: 15,
+                    child: Text(
+                      "Adet:" + urunModel!.adet.toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),

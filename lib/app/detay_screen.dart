@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/add_remove_button.dart';
 import 'package:stok_app/models/urun_model.dart';
@@ -7,7 +8,7 @@ import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class DetayScreen extends StatefulWidget {
   final Urun? urun;
-  bool? fav;
+  final bool? fav;
 
   DetayScreen({this.urun, this.fav});
 
@@ -17,6 +18,30 @@ class DetayScreen extends StatefulWidget {
 
 class _DetayScreenState extends State<DetayScreen> {
   int selectedIndex = 1;
+  bool? favbool;
+  bool depobool = false;
+  int kacTane = 0;
+  bool depoButtonKilit = false;
+
+  @override
+  void initState() {
+    favbool = widget.fav;
+    if (widget.urun!.adet == null) {
+      _depoKontrol();
+    } else {
+      selectedIndex = widget.urun!.adet!;
+    }
+
+    super.initState();
+  }
+
+  void _depoKontrol() async {
+    final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
+    kacTane = await _urunModel.depoKontrol(widget.urun!);
+    print(kacTane.toString());
+    setState(() {});
+    if (kacTane > 0) depobool = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +96,11 @@ class _DetayScreenState extends State<DetayScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    if (widget.fav!) {
-                                      widget.fav = false;
+                                    if (favbool!) {
+                                      favbool = false;
                                       _urunModel.deleteFavoriler(widget.urun!.urunID!);
                                     } else {
-                                      widget.fav = true;
+                                      favbool = true;
                                       _urunModel.addFavoriler(widget.urun!);
                                     }
                                   },
@@ -93,7 +118,7 @@ class _DetayScreenState extends State<DetayScreen> {
                                           BorderRadius.all(Radius.circular(100)),
                                     ),
                                     child: Icon(
-                                      widget.fav == false
+                                      favbool == false
                                           ? Icons.favorite_border
                                           : Icons.favorite,
                                       size: 30,
@@ -138,6 +163,28 @@ class _DetayScreenState extends State<DetayScreen> {
                 ),
               ),
             ),
+            depobool == true
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
+                      ],
+                    ),
+                    height: 30,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          "Depoda bu üründen " + kacTane.toString() + " adet var.",
+                          style:
+                              TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  )
+                : Container(),
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -162,7 +209,31 @@ class _DetayScreenState extends State<DetayScreen> {
                       });
                     },
                   ),
-                  ElevatedButton(onPressed: () {}, child: Text("Depoya Ekle")),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (!depoButtonKilit) {
+                          depoButtonKilit = true;
+                          final _urunModel =
+                              Provider.of<UrunViewModel>(context, listen: false);
+                          Urun yeniUrun = Urun.urunAdd(urun: widget.urun!);
+
+                          toastMesaj(widget.urun!.adet != null
+                              ? "Güncelleniyor..."
+                              : "Depoya Ekleniyor...");
+                          if (depobool) {
+                            kacTane = selectedIndex + kacTane;
+                            _urunModel.depoGuncelle(yeniUrun, selectedIndex);
+                          } else {
+                            yeniUrun.adet = selectedIndex;
+                            _urunModel.addDepo(yeniUrun);
+                          }
+                          toastMesaj(
+                              widget.urun!.adet != null ? "Güncellendi." : "Eklendi.");
+                          depoButtonKilit = false;
+                        }
+                      },
+                      child: Text(
+                          widget.urun!.adet == null ? "Depoya Ekle" : "Depoyu Güncelle")),
                   ElevatedButton(onPressed: () {}, child: Text("Sepete Ekle")),
                 ],
               ),
@@ -170,6 +241,16 @@ class _DetayScreenState extends State<DetayScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void toastMesaj(String mesaj) {
+    Fluttertoast.showToast(
+      backgroundColor: Colors.green,
+      msg: mesaj,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      fontSize: 18.0,
     );
   }
 }

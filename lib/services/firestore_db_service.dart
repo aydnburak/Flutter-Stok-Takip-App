@@ -105,4 +105,65 @@ class FirebaseDbService implements DbBase {
       return false;
     }
   }
+
+  @override
+  Future<void> addDepo(String userID, String urunID, int adet) async {
+    await _firestore.collection("depo").doc(userID + "--" + urunID).set({
+      'userID': userID,
+      'urunID': urunID,
+      'adet': adet,
+    });
+  }
+
+  @override
+  Future<void> deleteDepo(String userID, String urunID) async {
+    await _firestore.collection("depo").doc(userID + "--" + urunID).delete();
+  }
+
+  @override
+  Future<List<Urun>> getDepo(String userID) async {
+    QuerySnapshot querySnapshot =
+        await _firestore.collection('depo').where('userID', isEqualTo: userID).get();
+
+    List<Urun> urunler = [];
+    if (querySnapshot.docs.isNotEmpty) {
+      for (DocumentSnapshot tekDepoUrun in querySnapshot.docs) {
+        DocumentSnapshot documentSnapshot = await _firestore
+            .collection('products')
+            .doc(tekDepoUrun.data()!['urunID'])
+            .get();
+
+        if (documentSnapshot.data() != null) {
+          Urun urun = Urun.fromMap(documentSnapshot.data()!);
+          urun.adet = tekDepoUrun.data()!['adet'];
+          urunler.add(urun);
+        }
+      }
+    }
+    return urunler;
+  }
+
+  @override
+  Future<int> depoKontrol(Urun urun, String userID) async {
+    int kacTane = 0;
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection("depo").doc(userID + "--" + urun.urunID!).get();
+    if (documentSnapshot.data() != null) {
+      kacTane = documentSnapshot.data()!['adet'];
+    }
+
+    return kacTane;
+  }
+
+  Future<void> depoGuncelle(String userID, String urunID, int selectedIndex) async {
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection("depo").doc(userID + "--" + urunID).get();
+    if (documentSnapshot.data() != null) {
+      int kacTane = documentSnapshot.data()!['adet'];
+      await _firestore
+          .collection("depo")
+          .doc(userID + "--" + urunID)
+          .update({'adet': kacTane + selectedIndex});
+    }
+  }
 }

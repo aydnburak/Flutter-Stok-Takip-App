@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Urun {
   final String? urunID;
   String? adi;
@@ -9,10 +7,25 @@ class Urun {
   String? aciklama2;
   String? tip1;
   String? tip2;
+  int? adet;
 
   @override
   String toString() {
     return 'Urun{urunID: $urunID, adi: $adi, urunKodu: $urunKodu, photoURL: $photoURL, aciklama1: $aciklama1, aciklama2: $aciklama2, tip1: $tip1, tip2: $tip2}';
+  }
+
+  static Urun urunAdd({required Urun urun}) {
+    Urun yeniUrun = Urun(
+      urunID: urun.urunID,
+      adi: urun.adi,
+      urunKodu: urun.urunKodu,
+      photoURL: urun.photoURL,
+      aciklama1: urun.aciklama1,
+      aciklama2: urun.aciklama2,
+      tip1: urun.tip1,
+      tip2: urun.tip2,
+    );
+    return yeniUrun;
   }
 
   Urun(
