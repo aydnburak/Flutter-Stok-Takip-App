@@ -14,4 +14,5 @@ abstract class DbBase {
   Future<List<Urun>> getDepo(String userID);
   Future<int> depoKontrol(Urun urun, String userID);
   Future<void> depoGuncelle(String userID, String urunID, int selectedIndex);
+  Future<List<Kullanici>> altUyeleriGetir(String userID);
 }

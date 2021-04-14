@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/app/favoriler_page.dart';
@@ -5,38 +6,80 @@ import 'package:stok_app/app/home_page.dart';
 import 'package:stok_app/app/istek_page.dart';
 import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/app/stok_page.dart';
+import 'package:stok_app/app/topluluk_page.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
-class DrawerMenu extends StatelessWidget {
+class DrawerMenu extends StatefulWidget {
+  @override
+  _DrawerMenuState createState() => _DrawerMenuState();
+}
+
+class _DrawerMenuState extends State<DrawerMenu> {
+  @override
+  void initState() {
+    print("drawer menu acıldı");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _userModel = Provider.of<UserViewModel>(context, listen: false);
+    final _userModel = Provider.of<UserViewModel>(context);
     return Drawer(
       child: Center(
         child: Stack(
           children: <Widget>[
             ListView(
-              // Important: Remove any padding from the ListView.
               padding: EdgeInsets.zero,
               children: <Widget>[
                 DrawerHeader(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text("Hasan Kabze"),
-                      Text("Üye ID : 546525"),
-                      Text("General"),
-                      Row(
-                        children: <Widget>[
-                          Text("Üst Kişi : Derya "),
-                          Expanded(
-                            child: Container(),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          child: Center(
+                            child: AutoSizeText(
+                              _userModel.kullanici!.name!,
+                              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.warning),
-                            onPressed: () {},
-                          )
-                        ],
+                        ),
                       ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          child: AutoSizeText(
+                            "Yetkiliniz: " + _userModel.kullanici!.ustUyeName!,
+                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  child: AutoSizeText(
+                                    "No:" + _userModel.kullanici!.uyeNo!,
+                                    style: TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 5),
+                              Expanded(
+                                child: Container(
+                                  child: AutoSizeText(
+                                    "Rütbe:" + _userModel.kullanici!.rutbe!,
+                                    style: TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -93,8 +136,20 @@ class DrawerMenu extends StatelessWidget {
                         ),
                       );
                     }),
-                drawerItem(icon: Icons.group, text: "TOPLULUK", onTap: () {}),
-                drawerItem(icon: Icons.notifications_active, text: "HABER BÜLTENİ", onTap: () {}),
+                drawerItem(
+                    icon: Icons.group,
+                    text: "TOPLULUK",
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ToplulukPage(),
+                        ),
+                      );
+                    }),
+                drawerItem(
+                    icon: Icons.notifications_active,
+                    text: "HABER BÜLTENİ",
+                    onTap: () {}),
               ],
             ),
             Column(

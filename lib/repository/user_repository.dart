@@ -6,6 +6,7 @@ import 'package:stok_app/services/firestore_db_service.dart';
 class UserRepository {
   FirebaseAuthService _firebaseAuthService = locator<FirebaseAuthService>();
   FirebaseDbService _firebaseDbService = locator<FirebaseDbService>();
+
   //FirebaseStorageService _firebaseStorageService = locator<FirebaseStorageService>();
 
   Future<Kullanici?> currentUser() async {
@@ -39,9 +40,37 @@ class UserRepository {
     if (_kullanici != null) {
       _kullanici.name = name;
       _kullanici.uyeNo = uyeNo;
+      _kullanici.a = sifre;
       return await _firebaseDbService.saveUser(_kullanici);
     } else {
       return null;
     }
+  }
+
+  Future<bool> uyeAdd(String name, String uyeNo, String sifre, String ustUyeID,
+      String ustUyeName, String ustUyeEmail, String ustUyeS) async {
+    Kullanici? _kullanici =
+        await _firebaseAuthService.addUye(uyeNo, sifre, ustUyeEmail, ustUyeS);
+    if (_kullanici != null) {
+      _kullanici.ustYetkiliID = ustUyeID;
+      _kullanici.ustUyeName = ustUyeName;
+      _kullanici.name = name;
+      _kullanici.uyeNo = uyeNo;
+      _kullanici.bagimli = true;
+      _kullanici.rutbe = "Üye";
+      _kullanici.a = sifre;
+      Kullanici? kullanici = await _firebaseDbService.saveUser(_kullanici);
+      if (kullanici != null) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  Future<List<Kullanici>> altUyeleriGetir(String userID) async {
+    return _firebaseDbService.altUyeleriGetir(userID);
   }
 }

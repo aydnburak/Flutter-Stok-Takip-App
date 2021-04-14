@@ -19,7 +19,7 @@ class FirebaseAuthService {
 
   Future<Kullanici?> signInWithEmailAndPassword(String uyeNo, String sifre) async {
     UserCredential sonuc = await _firebaseAuth.signInWithEmailAndPassword(
-        email: uyeNo + "@gmail.com", password: sifre);
+        email: uyeNo + "admin@gmail.com", password: sifre);
 
     if (sonuc.user != null) {
       return Kullanici(userID: sonuc.user!.uid, email: sonuc.user!.email);
@@ -30,8 +30,29 @@ class FirebaseAuthService {
 
   Future<Kullanici?> createUserWithEmailAndPassword(String uyeNo, String sifre) async {
     UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: uyeNo + "@gmail.com", password: sifre);
+        email: uyeNo + "admin@gmail.com", password: sifre);
     if (sonuc.user != null) {
+      /*
+
+      User? user = _firebaseAuth.currentUser;
+      String? token = _firebaseAuth.currentUser!.refreshToken;
+      _firebaseAuth.print("rgregrere" + user!.uid);
+       */
+
+      return Kullanici(userID: sonuc.user!.uid, email: sonuc.user!.email);
+    } else {
+      return null;
+    }
+  }
+
+  Future<Kullanici?> addUye(
+      String uyeNo, String sifre, String ustUyeEmail, String ustUyeS) async {
+    UserCredential sonuc = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: uyeNo + "admin@gmail.com", password: sifre);
+    if (sonuc.user != null) {
+      await _firebaseAuth.signInWithEmailAndPassword(
+          email: ustUyeEmail, password: ustUyeS);
+
       return Kullanici(userID: sonuc.user!.uid, email: sonuc.user!.email);
     } else {
       return null;

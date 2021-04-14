@@ -4,30 +4,22 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
-enum FormType { Register, Login }
 enum FormDurum { Dolu, Bos }
 enum Sifre { On, Off }
 
-class SignInAndRegisterPage extends StatefulWidget {
+class SignInPage extends StatefulWidget {
   @override
   _SignInPageState createState() => _SignInPageState();
 }
 
-class _SignInPageState extends State<SignInAndRegisterPage> {
+class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _name, _uyeNo, _password, _errorText;
-  late String _buttonText, _linkText, _titleText;
-  var _formType = FormType.Login;
+  String? _uyeNo, _password, _errorText;
   var _formDurum = FormDurum.Bos;
   Sifre _sifre = Sifre.Off;
 
   @override
   Widget build(BuildContext context) {
-    _titleText = _formType == FormType.Login ? "Giriş" : "Kayıt";
-    _buttonText = _formType == FormType.Login ? "Giriş Yap" : "Kayıt Ol";
-    _linkText = _formType == FormType.Login ? "Hesabınız Yok Mu? " : "Hesabınız Var Mı? ";
-    //final _userModel = Provider.of<UserViewModel>(context);
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Stack(
@@ -67,51 +59,12 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              _titleText,
+                              "Giriş",
                               style: GoogleFonts.fanwoodText(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 50,
                                   color: Colors.green),
                             ),
-                            _formType != FormType.Login
-                                ? Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: TextFormField(
-                                      onSaved: (girilenName) {
-                                        _name = girilenName;
-                                      },
-                                      validator: (value) {
-                                        if (value != null) {
-                                          if (value.isEmpty) {
-                                            return 'Name Boş Olamaz';
-                                          } else if (value.length < 4) {
-                                            return '4 Karakterden az Olamaz';
-                                          }
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                          icon: Icon(
-                                            Icons.account_box,
-                                            color: Colors.green,
-                                          ),
-                                          hintText: 'Adınız Soyadınız',
-                                          enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                              borderSide:
-                                                  BorderSide(color: Colors.green)),
-                                          focusedBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                              borderSide:
-                                                  BorderSide(color: Colors.green)),
-                                          errorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                              borderSide: BorderSide(color: Colors.red)),
-                                          focusedErrorBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                              borderSide: BorderSide(color: Colors.red))),
-                                    ),
-                                  )
-                                : Container(),
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: TextFormField(
@@ -133,7 +86,7 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                       Icons.person,
                                       color: Colors.green,
                                     ),
-                                    hintText: 'Üye Numaranız',
+                                    labelText: 'Üye Numaranız',
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(16),
                                         borderSide: BorderSide(color: Colors.green)),
@@ -176,7 +129,7 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                       Icons.vpn_key,
                                       color: Colors.green,
                                     ),
-                                    hintText: 'Şifre',
+                                    labelText: 'Şifre',
                                     enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(16),
                                         borderSide: BorderSide(color: Colors.green)),
@@ -216,43 +169,20 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
                                     buttunaBasildi();
                                   },
                                   child: Text(
-                                    _buttonText,
+                                    "Giriş Yap",
                                     style: TextStyle(color: Colors.white, fontSize: 20),
                                   ),
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(95, 20, 0, 0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _linkText,
-                                    style: TextStyle(
-                                        color: Colors.black, fontWeight: FontWeight.bold),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        _formType == FormType.Login
-                                            ? _formType = FormType.Register
-                                            : _formType = FormType.Login;
-                                        _formKey.currentState!.reset();
-                                        _errorText = null;
-                                      });
-                                    },
-                                    child: Text(
-                                      _formType == FormType.Login
-                                          ? "Kayıt Ol"
-                                          : "Giriş Yap",
-                                      style: TextStyle(
-                                          color: Colors.green,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
+                            IconButton(
+                                icon: Icon(Icons.add),
+                                onPressed: () {
+                                  final _userModel =
+                                      Provider.of<UserViewModel>(context, listen: false);
+                                  _userModel.createUserWithEmailAndPassword(
+                                      "171210301", "123456", "Admin");
+                                })
                           ],
                         ),
                       ),
@@ -281,22 +211,13 @@ class _SignInPageState extends State<SignInAndRegisterPage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       durumDegis();
-      if (_formType == FormType.Login) {
-        try {
-          await _userModel.signInWithEmailAndPassword(_uyeNo!, _password!);
-        } catch (e) {
-          _errorText = hata(e.toString());
-          print("hata : " + e.toString());
-          durumDegis();
-        }
-      } else {
-        try {
-          await _userModel.createUserWithEmailAndPassword(_uyeNo!, _password!, _name!);
-        } catch (e) {
-          _errorText = hata(e.toString());
-          print("hata : " + e.toString());
-          durumDegis();
-        }
+
+      try {
+        await _userModel.signInWithEmailAndPassword(_uyeNo!, _password!);
+      } catch (e) {
+        _errorText = hata(e.toString());
+        print("hata : " + e.toString());
+        durumDegis();
       }
     }
   }

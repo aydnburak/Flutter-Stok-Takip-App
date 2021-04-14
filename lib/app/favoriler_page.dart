@@ -95,19 +95,43 @@ class _FavorilerPageState extends State<FavorilerPage> {
   _listelemeBolumu() {
     final _urunModel = Provider.of<UrunViewModel>(context);
     List<Urun> _favoriler = _favorileriVer(_urunModel.favoriUrunler);
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: GridView.builder(
-          itemCount: _favoriler.length,
-          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.75,
+    if (_favoriler.isNotEmpty) {
+      return Expanded(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: GridView.builder(
+            itemCount: _favoriler.length,
+            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+            ),
+            itemBuilder: (context, index) => UrunCard(urunModel: _favoriler[index]),
           ),
-          itemBuilder: (context, index) => UrunCard(urunModel: _favoriler[index]),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.hourglass_empty,
+                color: Theme.of(context).primaryColor,
+                size: 120,
+              ),
+              Text(
+                "Ürün Yok",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 36),
+              )
+            ],
+          ),
+        ),
+        height: MediaQuery.of(context).size.height * 0.5,
+      );
+    }
   }
 
   List<Urun> _favorileriVer(List<Urun> favoriUrunler) {

@@ -166,4 +166,16 @@ class FirebaseDbService implements DbBase {
           .update({'adet': kacTane + selectedIndex});
     }
   }
+
+  Future<List<Kullanici>> altUyeleriGetir(String userID) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("users")
+        .where('ustYetkiliID', isEqualTo: userID)
+        .get();
+    List<Kullanici> altUyeler = [];
+    for (DocumentSnapshot kullanici in querySnapshot.docs) {
+      altUyeler.add(Kullanici.fromMap(kullanici.data()!));
+    }
+    return altUyeler;
+  }
 }

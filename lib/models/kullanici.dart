@@ -6,14 +6,16 @@ class Kullanici {
   String? email;
   String? name;
   String? rutbe;
+  String? a;
   String? ustYetkiliID;
+  String? ustUyeName;
   bool? bagimli;
   DateTime? createdAt;
   DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'Kullanici{userID: $userID, uyeNo: $uyeNo, email: $email, name: $name, rutbe: $rutbe, ustYetkiliID: $ustYetkiliID, bagimli: $bagimli, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return 'Kullanici{userID: $userID, uyeNo: $uyeNo, email: $email, name: $name, rutbe: $rutbe, ustYetkiliID: $ustYetkiliID, ustUyeName: $ustUyeName, bagimli: $bagimli, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 
   Kullanici(
@@ -22,7 +24,9 @@ class Kullanici {
       this.email,
       this.name,
       this.rutbe,
+      this.a,
       this.ustYetkiliID,
+      this.ustUyeName,
       this.bagimli,
       this.createdAt,
       this.updatedAt});
@@ -34,7 +38,9 @@ class Kullanici {
       'email': email,
       'name': name,
       'rutbe': rutbe,
+      'a': a,
       'ustYetkiliID': ustYetkiliID,
+      'ustUyeName': ustUyeName,
       'bagimli': bagimli ?? true,
       'createdAt': createdAt ?? FieldValue.serverTimestamp(),
       'updatedAt': updatedAt ?? FieldValue.serverTimestamp(),
@@ -47,7 +53,9 @@ class Kullanici {
         email = map['email'],
         name = map['name'],
         rutbe = map['rutbe'],
+        a = map['a'],
         ustYetkiliID = map['ustYetkiliID'],
+        ustUyeName = map['ustUyeName'],
         bagimli = map['bagimli'],
         createdAt = (map['createdAt'] as Timestamp).toDate(),
         updatedAt = (map['updatedAt'] as Timestamp).toDate();

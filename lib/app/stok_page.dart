@@ -106,19 +106,43 @@ class _StokPageState extends State<StokPage> {
   _listelemeBolumu() {
     final _urunModel = Provider.of<UrunViewModel>(context);
     List<Urun> _depo = _depoyuVer(_urunModel.depoUrunler);
-    return Expanded(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: GridView.builder(
-          itemCount: _depo.length,
-          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.75,
+    if (_depo.isNotEmpty) {
+      return Expanded(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          child: GridView.builder(
+            itemCount: _depo.length,
+            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.75,
+            ),
+            itemBuilder: (context, index) => UrunCard(urunModel: _depo[index]),
           ),
-          itemBuilder: (context, index) => UrunCard(urunModel: _depo[index]),
         ),
-      ),
-    );
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.hourglass_empty,
+                color: Theme.of(context).primaryColor,
+                size: 120,
+              ),
+              Text(
+                "Ürün Yok",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 36),
+              )
+            ],
+          ),
+        ),
+        height: MediaQuery.of(context).size.height * 0.5,
+      );
+    }
   }
 
   List<Urun> _depoyuVer(List<Urun> depoUrunler) {

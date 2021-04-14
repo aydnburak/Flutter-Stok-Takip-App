@@ -9,6 +9,9 @@ class UserViewModel with ChangeNotifier {
   ViewState _state = ViewState.Idle;
   UserRepository _userRepository = locator<UserRepository>();
   Kullanici? _kullanici;
+  List<Kullanici> _uyelerim = [];
+
+  List<Kullanici> get uyelerim => _uyelerim;
 
   Kullanici? get kullanici => _kullanici;
 
@@ -27,6 +30,7 @@ class UserViewModel with ChangeNotifier {
     try {
       state = ViewState.Busy;
       _kullanici = await _userRepository.currentUser();
+      print("current User :" + _kullanici!.userID!);
     } catch (e) {
       print("currentUser hatası : " + e.toString());
     } finally {
@@ -54,6 +58,15 @@ class UserViewModel with ChangeNotifier {
     }
   }
 
+  Future<bool> uyeAdd(String name, String uyeNo, String sifre) async {
+    String userID = kullanici!.userID!;
+    String ustUyeName = kullanici!.name!;
+    String ustUyeEmail = kullanici!.email!;
+    String ustUyeS = kullanici!.a!;
+    return await _userRepository.uyeAdd(
+        name, uyeNo, sifre, userID, ustUyeName, ustUyeEmail, ustUyeS);
+  }
+
   Future<void> createUserWithEmailAndPassword(
       String uyeNo, String sifre, String name) async {
     _kullanici = await _userRepository.createUserWithEmailAndPassword(uyeNo, sifre, name);
@@ -61,5 +74,12 @@ class UserViewModel with ChangeNotifier {
     if (_kullanici != null) {
       state = ViewState.Idle;
     }
+  }
+
+  Future<void> altUyeleriGetir() async {
+    print(_kullanici!.userID!.toString());
+    _uyelerim = await _userRepository.altUyeleriGetir(_kullanici!.userID!);
+    print(_uyelerim.length);
+    state = ViewState.Idle;
   }
 }
