@@ -178,4 +178,8 @@ class FirebaseDbService implements DbBase {
     }
     return altUyeler;
   }
+
+  Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
+    await _firestore.collection("users").doc(userID).update({'bagimli': deger});
+  }
 }

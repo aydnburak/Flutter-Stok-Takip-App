@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/urun_card.dart';
+import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/models/categories_model.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
@@ -40,13 +41,12 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.shopping_basket_outlined),
             onPressed: () {
               setState(() {});
-              /*
+
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) => SepetPage(),
                 ),
               );
-               */
             },
           ),
         ],

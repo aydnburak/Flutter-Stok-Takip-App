@@ -43,7 +43,7 @@ class UrunCard extends StatelessWidget {
           children: <Widget>[
             Container(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   urunModel!.adet != null
                       ? GestureDetector(
@@ -58,6 +58,7 @@ class UrunCard extends StatelessWidget {
                             _urunModel.deleteDepo(urunModel!.urunID!);
                           },
                           child: Container(
+                            margin: EdgeInsets.only(right: 3),
                             padding: EdgeInsets.all(3),
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -76,11 +77,12 @@ class UrunCard extends StatelessWidget {
                           ),
                         )
                       : Container(),
-                  Text(
+                  AutoSizeText(
                     "Kod:" + urunModel!.urunKodu!,
                     style: TextStyle(
                         fontWeight: FontWeight.w900, color: Colors.grey.shade600),
                   ),
+                  Expanded(child: Container()),
                   GestureDetector(
                     onTap: () {
                       if (_fav) {

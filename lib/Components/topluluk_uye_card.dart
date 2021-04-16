@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/models/kullanici.dart';
+import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 class ToplulukUyeCard extends StatefulWidget {
   final Kullanici user;
@@ -21,6 +23,7 @@ class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
 
   @override
   Widget build(BuildContext context) {
+    final _userModel = Provider.of<UserViewModel>(context);
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
@@ -74,6 +77,7 @@ class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
                   Switch(
                     value: _user.bagimli!,
                     onChanged: (bool deger) {
+                      _userModel.uyeBildirimiGuncelle(_user.userID!, deger);
                       setState(() {
                         _user.bagimli = deger;
                       });

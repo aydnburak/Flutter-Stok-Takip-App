@@ -1,5 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
+import 'package:stok_app/Components/sepet_urun_card.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
+import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
 class SepetPage extends StatefulWidget {
   @override
@@ -9,6 +14,7 @@ class SepetPage extends StatefulWidget {
 class _SepetPageState extends State<SepetPage> {
   @override
   Widget build(BuildContext context) {
+    final _islemModel = Provider.of<IslemViewModel>(context);
     return Scaffold(
       drawer: DrawerMenu(),
       drawerEnableOpenDragGesture: false,
@@ -17,7 +23,76 @@ class _SepetPageState extends State<SepetPage> {
         centerTitle: true,
       ),
       body: Column(
-        children: <Widget>[],
+        children: <Widget>[
+          _listelemeBolumu(),
+          _islemModel.sepetim.isNotEmpty ? _buttomBolumu() : Container(),
+        ],
+      ),
+    );
+  }
+
+  _listelemeBolumu() {
+    final _islemModel = Provider.of<IslemViewModel>(context);
+
+    if (_islemModel.sepetim.isNotEmpty) {
+      return Expanded(
+        child: GridView.builder(
+          itemCount: _islemModel.sepetim.length,
+          gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 1,
+            childAspectRatio: 2.5,
+          ),
+          itemBuilder: (context, index) =>
+              SepetUrunCard(urun: _islemModel.sepetim[index], index: index),
+        ),
+      );
+    } else {
+      return Expanded(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.shopping_cart_outlined,
+                color: Theme.of(context).primaryColor,
+                size: 120,
+              ),
+              AutoSizeText(
+                "Sepetinizde Ürün Yok.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 36),
+              )
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  _buttomBolumu() {
+    final _userModel = Provider.of<UserViewModel>(context);
+    return Container(
+      height: 60,
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))],
+      ),
+      child: Row(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              AutoSizeText("Gidecek Ust Üye:", style: TextStyle(fontSize: 10)),
+              AutoSizeText(
+                _userModel.kullanici!.ustUyeName!,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          Spacer(),
+          ElevatedButton(onPressed: () {}, child: Text("İstek Gönder"))
+        ],
       ),
     );
   }

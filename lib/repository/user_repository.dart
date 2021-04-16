@@ -73,4 +73,8 @@ class UserRepository {
   Future<List<Kullanici>> altUyeleriGetir(String userID) async {
     return _firebaseDbService.altUyeleriGetir(userID);
   }
+
+  Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
+    await _firebaseDbService.uyeBildirimiGuncelle(userID, deger);
+  }
 }

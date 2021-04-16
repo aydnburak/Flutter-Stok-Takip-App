@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:stok_app/repository/islem_repository.dart';
 import 'package:stok_app/repository/urun_repository.dart';
 import 'package:stok_app/repository/user_repository.dart';
 import 'package:stok_app/services/firebase_auth_service.dart';
@@ -11,6 +12,7 @@ void setupLocator() {
   locator.registerLazySingleton(() => FirebaseAuthService());
   locator.registerLazySingleton(() => UserRepository());
   locator.registerLazySingleton(() => UrunRepository());
+  locator.registerLazySingleton(() => IslemRepository());
   locator.registerLazySingleton(() => FirebaseDbService());
   locator.registerLazySingleton(() => FirebaseStorageService());
 }

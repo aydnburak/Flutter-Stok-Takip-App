@@ -82,4 +82,8 @@ class UserViewModel with ChangeNotifier {
     print(_uyelerim.length);
     state = ViewState.Idle;
   }
+
+  Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
+    await _userRepository.uyeBildirimiGuncelle(userID, deger);
+  }
 }

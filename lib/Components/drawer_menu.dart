@@ -2,8 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/app/favoriler_page.dart';
+import 'package:stok_app/app/haber_bulteni_page.dart';
 import 'package:stok_app/app/home_page.dart';
-import 'package:stok_app/app/istek_page.dart';
+import 'package:stok_app/app/istekler/tabbar.dart';
 import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/app/stok_page.dart';
 import 'package:stok_app/app/topluluk_page.dart';
@@ -102,7 +103,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => IstekPage(),
+                          builder: (context) => TabbarPage(),
                         ),
                       );
                     }),
@@ -149,7 +150,13 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 drawerItem(
                     icon: Icons.notifications_active,
                     text: "HABER BÜLTENİ",
-                    onTap: () {}),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => HaberBulteniPage(),
+                        ),
+                      );
+                    }),
               ],
             ),
             Column(

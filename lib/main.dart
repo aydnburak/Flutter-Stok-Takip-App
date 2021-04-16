@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/app/landing_page.dart';
 import 'package:stok_app/locator.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
@@ -27,6 +28,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ChangeNotifierProvider(create: (context) => UserViewModel()),
         ChangeNotifierProvider(create: (context) => UrunViewModel()),
+        ChangeNotifierProvider(create: (context) => IslemViewModel()),
       ],
       child: MaterialApp(
         title: 'StokApp',

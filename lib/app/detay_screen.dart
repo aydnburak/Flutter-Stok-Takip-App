@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/add_remove_button.dart';
 import 'package:stok_app/models/urun_model.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class DetayScreen extends StatefulWidget {
@@ -200,12 +201,12 @@ class _DetayScreenState extends State<DetayScreen> {
                     value: selectedIndex,
                     remove: () {
                       setState(() {
-                        if (selectedIndex != 1) selectedIndex--;
+                        if (selectedIndex > 1 && selectedIndex < 11) selectedIndex--;
                       });
                     },
                     add: () {
                       setState(() {
-                        selectedIndex++;
+                        if (selectedIndex > 0 && selectedIndex < 10) selectedIndex++;
                       });
                     },
                   ),
@@ -234,7 +235,18 @@ class _DetayScreenState extends State<DetayScreen> {
                       },
                       child: Text(
                           widget.urun!.adet == null ? "Depoya Ekle" : "Depoyu Güncelle")),
-                  ElevatedButton(onPressed: () {}, child: Text("Sepete Ekle")),
+                  ElevatedButton(
+                      onPressed: () {
+                        final _islemModel =
+                            Provider.of<IslemViewModel>(context, listen: false);
+                        toastMesaj("Sepete Eklendi.");
+                        Urun yeniUrun = Urun.urunAdd(urun: widget.urun!);
+                        yeniUrun.adet = selectedIndex;
+                        _islemModel.addSepetim(yeniUrun);
+                        selectedIndex = 1;
+                        setState(() {});
+                      },
+                      child: Text("Sepete Ekle")),
                 ],
               ),
             ),
