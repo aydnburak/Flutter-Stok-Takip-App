@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stok_app/Components/islem_card.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 
 class IstekKendimPage extends StatefulWidget {
   @override
@@ -14,8 +17,17 @@ class _IstekKendimPageState extends State<IstekKendimPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blue,
-    );
+    final _islemModel = Provider.of<IslemViewModel>(context);
+
+    if (_islemModel.isteklerGeldimi) {
+      return ListView.builder(
+          itemCount: _islemModel.myIslemlerim.length,
+          itemBuilder: (context, index) => IslemCard(
+              sepet: _islemModel.myIslemlerim[index], index: index, durum: true));
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }

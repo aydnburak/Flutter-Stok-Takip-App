@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:stok_app/models/kullanici.dart';
+import 'package:stok_app/models/sepet_model.dart';
 import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/services/db_base.dart';
 
@@ -181,5 +182,90 @@ class FirebaseDbService implements DbBase {
 
   Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
     await _firestore.collection("users").doc(userID).update({'bagimli': deger});
+  }
+
+  Future<Kullanici?> getUstYetkili(Kullanici user) async {
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection("users").doc(user.ustYetkiliID).get();
+
+    if (documentSnapshot.data() != null) {
+      return Kullanici.fromMap(documentSnapshot.data()!);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> sepetSave(Kullanici user, Kullanici ustUser, List<Urun> sepetim) async {
+    Sepet islemSepeti = Sepet();
+    islemSepeti.userID = user.userID;
+    islemSepeti.userName = user.name;
+    islemSepeti.userNo = user.uyeNo;
+    islemSepeti.ustUserID = ustUser.userID;
+    islemSepeti.ustUserName = ustUser.name;
+    islemSepeti.ustUserNo = ustUser.uyeNo;
+    String sepetId = _firestore.collection("sepetler").doc().id;
+    islemSepeti.sepetID = sepetId;
+    await _firestore.collection("sepetler").doc(sepetId).set(islemSepeti.toMap());
+    for (Urun urun in sepetim) {
+      await _firestore
+          .collection("sepetler")
+          .doc(sepetId)
+          .collection("sepetinUrunleri")
+          .doc()
+          .set({'urunID': urun.urunID, 'adet': urun.adet});
+    }
+    /*
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection("sepetler").doc(sepetId).get();
+    if (documentSnapshot.data() != null) {
+      print('var');
+    } else {
+      print('yok');
+    }
+     */
+  }
+
+  Future<List<Sepet>> getSepetlerim(String userID, bool durum) async {
+    List<Sepet> mySepetlerim = [];
+
+    QuerySnapshot querySnapshot;
+    if (durum) {
+      querySnapshot = await _firestore
+          .collection("sepetler")
+          .where('userID', isEqualTo: userID)
+          .orderBy('createdAt', descending: true)
+          .get();
+    } else {
+      querySnapshot = await _firestore
+          .collection("sepetler")
+          .where('ustUserID', isEqualTo: userID)
+          .orderBy('createdAt', descending: true)
+          .get();
+    }
+
+    for (DocumentSnapshot sepet in querySnapshot.docs) {
+      Sepet eklenecekSepet = Sepet.fromMap(sepet.data()!);
+      QuerySnapshot querySnapshot = await _firestore
+          .collection("sepetler")
+          .doc(eklenecekSepet.sepetID)
+          .collection("sepetinUrunleri")
+          .get();
+      List<Urun> urunlerim = [];
+      for (DocumentSnapshot urunler in querySnapshot.docs) {
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection("products").doc(urunler.data()!['urunID']).get();
+        Urun a = Urun.fromMap(documentSnapshot.data()!);
+        a.adet = urunler.data()!['adet'];
+        urunlerim.add(a);
+      }
+      eklenecekSepet.urunlerim = urunlerim;
+      mySepetlerim.add(eklenecekSepet);
+    }
+
+    return mySepetlerim;
+  }
+
+  Future<void> islemSepetDelete(String sepetID) async {
+    await _firestore.collection("sepetler").doc(sepetID).delete();
   }
 }

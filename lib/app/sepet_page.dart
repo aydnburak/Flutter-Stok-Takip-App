@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/sepet_urun_card.dart';
@@ -71,6 +72,7 @@ class _SepetPageState extends State<SepetPage> {
 
   _buttomBolumu() {
     final _userModel = Provider.of<UserViewModel>(context);
+    final _islemModel = Provider.of<IslemViewModel>(context);
     return Container(
       height: 60,
       padding: EdgeInsets.all(10),
@@ -91,9 +93,29 @@ class _SepetPageState extends State<SepetPage> {
             ],
           ),
           Spacer(),
-          ElevatedButton(onPressed: () {}, child: Text("İstek Gönder"))
+          ElevatedButton(
+              onPressed: () {
+                try {
+                  _islemModel.sepetSave();
+                } catch (e) {} finally {
+                  toastMesaj('İsteğiniz Gönderildi...');
+                  _islemModel.allDeleteSepetim();
+                  setState(() {});
+                }
+              },
+              child: Text("İstek Gönder"))
         ],
       ),
+    );
+  }
+
+  void toastMesaj(String mesaj) {
+    Fluttertoast.showToast(
+      backgroundColor: Colors.green,
+      msg: mesaj,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      fontSize: 18.0,
     );
   }
 }

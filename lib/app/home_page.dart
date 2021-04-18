@@ -4,6 +4,7 @@ import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/urun_card.dart';
 import 'package:stok_app/app/sepet_page.dart';
 import 'package:stok_app/models/categories_model.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
@@ -19,10 +20,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
+    final _islemModel = Provider.of<IslemViewModel>(context, listen: false);
     print("home page acıldı ");
     if (!_urunModel.homeOpen) {
       _urunModel.homeOpen = true;
       _urunModel.getFavoriler();
+      _islemModel.getUstYetkili();
     }
     super.initState();
   }

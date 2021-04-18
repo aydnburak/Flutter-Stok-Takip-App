@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/app/istekler/istek_gelen_page.dart';
 import 'package:stok_app/app/istekler/istek_kendim_page.dart';
+import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 
 class TabbarPage extends StatefulWidget {
   @override
@@ -12,24 +14,25 @@ class _TabbarPageState extends State<TabbarPage> {
   @override
   void initState() {
     print("Tabbar dayız");
+    final _islemModel = Provider.of<IslemViewModel>(context, listen: false);
+    _islemModel.getIslemlerim();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
       length: 2,
       child: Scaffold(
         drawer: DrawerMenu(),
         drawerEnableOpenDragGesture: false,
         appBar: AppBar(
-          title: Text("ISTEKLER"),
+          title: Text("İSTEKLER"),
           centerTitle: true,
           bottom: TabBar(
             tabs: <Widget>[
-              Tab(text: "Kendim"),
-              Tab(text: "Gelen"),
+              Tab(text: "İsteklerim"),
+              Tab(text: "Gelen İsteklerim"),
             ],
           ),
         ),
