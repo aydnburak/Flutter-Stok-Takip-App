@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stok_app/locator.dart';
+import 'package:stok_app/models/depo_urun_list_model.dart';
+import 'package:stok_app/models/depo_urun_model.dart';
 import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/repository/urun_repository.dart';
 
@@ -10,16 +12,17 @@ class UrunViewModel with ChangeNotifier {
   UrunRepository _urunRepository = locator<UrunRepository>();
   bool depoOpen = false;
   bool homeOpen = false;
+  int selectedIndex = 0;
   String? userID;
   List<Urun> _urunler = [];
   List<Urun> _favoriUrunler = [];
-  List<Urun> _depoUrunler = [];
+  List<DepoUrunList> _depoUrunList = [];
+
+  List<DepoUrunList> get depoUrunList => _depoUrunList;
 
   List<Urun> get urunler => _urunler;
 
   List<Urun> get favoriUrunler => _favoriUrunler;
-
-  List<Urun> get depoUrunler => _depoUrunler;
 
   UrunState get state => _state;
 
@@ -59,7 +62,6 @@ class UrunViewModel with ChangeNotifier {
   }
 
   bool searchFavoriler(String urunID) {
-    //return await _urunRepository.searchFavoriler(userID, urunID);
     if (_favoriUrunler.isNotEmpty) {
       for (Urun urun in _favoriUrunler) {
         if (urun.urunID == urunID) {
@@ -76,96 +78,63 @@ class UrunViewModel with ChangeNotifier {
     state = UrunState.Idle;
   }
 
-  Future<bool> addDepo(Urun urun) async {
+  Future<void> addDepo1(DepoUrun depoUrun) async {
+    depoUrun.userID = userID;
+
     if (depoOpen) {
-      bool sonuc = kontrol(urun);
-      if (!sonuc) {
-        print("yokum");
-        _depoUrunler.add(urun);
-        await _urunRepository.addDepo(userID!, urun.urunID!, urun.adet!);
+      int index =
+          depoUrunList.indexWhere((element) => element.depoUrun.urunKodu == depoUrun.urunKodu);
+      if (index != -1) {
+        int indexCreatedAt = depoUrunList[index]
+            .tarihlerim
+            .indexWhere((element) => element.createdAt == depoUrun.createdAt);
+        if (indexCreatedAt == -1) {
+          depoUrunList[index].tarihlerim.add(TarihList(depoUrun.createdAt!, depoUrun.adet!));
+        } else {
+          depoUrunList[index].tarihlerim[indexCreatedAt].adet += depoUrun.adet!;
+        }
+        depoUrunList.first.tarihlerim.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        await _urunRepository.addDepo1(depoUrun);
         state = UrunState.Idle;
-        return true;
       } else {
-        print("varım");
-        for (Urun urunum in _depoUrunler) {
-          if (urunum.urunID == urun.urunID) {
-            urunum.adet = urun.adet;
-          }
-        }
-        await _urunRepository.addDepo(userID!, urun.urunID!, urun.adet!);
+        var _d = DepoUrunList(depoUrun);
+        _d.tarihlerim.add(TarihList(depoUrun.createdAt!, depoUrun.adet!));
+        depoUrunList.add(_d);
+        await _urunRepository.addDepo1(depoUrun);
         state = UrunState.Idle;
-        return false;
       }
     } else {
-      await _urunRepository.addDepo(userID!, urun.urunID!, urun.adet!);
+      await _urunRepository.addDepo1(depoUrun);
       state = UrunState.Idle;
-
-      return true;
     }
   }
 
-  Future<void> getDepo() async {
-    _depoUrunler = await _urunRepository.getDepo(userID!);
-    print("depo geldi");
+  Future<void> getDepo1() async {
+    _depoUrunList = await _urunRepository.getDepo1(userID!);
     state = UrunState.Idle;
   }
 
-  Future<void> deleteDepo(String urunID) async {
+  Future<void> deleteDepo1(String urunID, DateTime createdAt) async {
     if (depoOpen) {
-      List<Urun> list = [];
-      if (_depoUrunler.isNotEmpty) {
-        for (Urun urun in _depoUrunler) {
-          if (urun.urunID != urunID) {
-            list.add(urun);
-          }
-        }
-      }
-      _depoUrunler = list;
-      await _urunRepository.deleteDepo(userID!, urunID);
+      int index = depoUrunList.indexWhere((element) => element.depoUrun.urunID == urunID);
+      depoUrunList[index].tarihlerim.removeWhere((element) => element.createdAt == createdAt);
+      await _urunRepository.deleteDepo1(userID!, urunID, createdAt);
     } else {
-      await _urunRepository.deleteDepo(userID!, urunID);
+      await _urunRepository.deleteDepo1(userID!, urunID, createdAt);
     }
     state = UrunState.Idle;
   }
 
-  bool kontrol(Urun urun) {
-    for (Urun urundepo in _depoUrunler) {
-      if (urun.urunID == urundepo.urunID) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  Future<int> depoKontrol(Urun urun) async {
-    int kacTane = 0;
+  Future<void> updateDopo1(String urunID, DateTime createdAt, int adet) async {
     if (depoOpen) {
-      for (Urun depodakiUrun in _depoUrunler) {
-        if (depodakiUrun.urunID == urun.urunID) {
-          kacTane = depodakiUrun.adet!;
+      int index = depoUrunList.indexWhere((element) => element.depoUrun.urunID == urunID);
+      int indexDate =
+          depoUrunList[index].tarihlerim.indexWhere((element) => element.createdAt == createdAt);
+      depoUrunList[index].tarihlerim[indexDate].adet = adet;
 
-          return kacTane;
-        }
-      }
-
-      return kacTane;
+      await _urunRepository.updateDepo1(userID!, urunID, createdAt, adet);
     } else {
-      kacTane = await _urunRepository.depoKontrol(urun, userID!);
-
-      return kacTane;
-    }
-  }
-
-  Future<void> depoGuncelle(Urun yeniUrun, int selectedIndex) async {
-    if (depoOpen) {
-      for (Urun depodakiUrun in _depoUrunler) {
-        if (depodakiUrun.urunID == yeniUrun.urunID) {
-          depodakiUrun.adet = depodakiUrun.adet! + selectedIndex;
-          await _urunRepository.depoGuncelle(userID!, yeniUrun, selectedIndex);
-        }
-      }
-    } else {
-      await _urunRepository.depoGuncelle(userID!, yeniUrun, selectedIndex);
+      await _urunRepository.updateDepo1(userID!, urunID, createdAt, adet);
     }
     state = UrunState.Idle;
   }

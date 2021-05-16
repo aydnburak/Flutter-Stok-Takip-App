@@ -1,9 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:stok_app/app/detay_screen.dart';
+import 'package:stok_app/app/urun_detay_page/detay_screen.dart';
 import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
@@ -35,9 +34,7 @@ class UrunCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(25),
-          boxShadow: [
-            BoxShadow(color: Colors.grey, offset: Offset(0, -1), blurRadius: 10)
-          ],
+          boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0, -1), blurRadius: 10)],
         ),
         child: Column(
           children: <Widget>[
@@ -45,42 +42,9 @@ class UrunCard extends StatelessWidget {
               child: Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  urunModel!.adet != null
-                      ? GestureDetector(
-                          onTap: () {
-                            Fluttertoast.showToast(
-                              backgroundColor: Colors.green,
-                              msg: "Siliniyor...",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              fontSize: 18.0,
-                            );
-                            _urunModel.deleteDepo(urunModel!.urunID!);
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(right: 3),
-                            padding: EdgeInsets.all(3),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey,
-                                    blurRadius: 5,
-                                    offset: Offset(0, -1))
-                              ],
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                            ),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                          ),
-                        )
-                      : Container(),
                   AutoSizeText(
                     "Kod:" + urunModel!.urunKodu!,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w900, color: Colors.grey.shade600),
+                    style: TextStyle(fontWeight: FontWeight.w900, color: Colors.grey.shade600),
                   ),
                   Expanded(child: Container()),
                   GestureDetector(
@@ -96,8 +60,7 @@ class UrunCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
+                          BoxShadow(color: Colors.grey, blurRadius: 5, offset: Offset(0, -1))
                         ],
                         borderRadius: BorderRadius.all(Radius.circular(100)),
                       ),

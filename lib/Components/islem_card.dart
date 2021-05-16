@@ -1,30 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:stok_app/app/istekler/istek_detay_page.dart';
 import 'package:stok_app/models/sepet_model.dart';
-import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 
-class IslemCard extends StatefulWidget {
-  Sepet sepet;
-  int index;
-  bool durum;
+class IslemCard extends StatelessWidget {
+  final Sepet sepet;
+  final int index;
+  final bool durum;
 
   IslemCard({required this.sepet, required this.index, required this.durum});
-
-  @override
-  _IslemCardState createState() => _IslemCardState();
-}
-
-class _IslemCardState extends State<IslemCard> {
-  late Sepet sepet;
-
-  @override
-  void initState() {
-    sepet = widget.sepet;
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,16 +30,16 @@ class _IslemCardState extends State<IslemCard> {
                 children: <Widget>[
                   AutoSizeText(_tarihVeSaatiVer(sepet.createdAt!)),
                   SizedBox(height: 10),
-                  widget.durum == true
-                      ? AutoSizeText("Yetkili:" + sepet.ustUserName!)
-                      : AutoSizeText("Kimden:" + sepet.userName!),
+                  durum == true
+                      ? AutoSizeText("Yetkili: " + sepet.ustUserName!)
+                      : AutoSizeText("Kimden: " + sepet.userName!),
                 ],
               ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => IstekDetayPage(
-                            sepet: sepet, index: widget.index, durum: widget.durum)));
+                        builder: (context) =>
+                            IstekDetayPage(sepet: sepet, index: index, durum: durum)));
                   },
                   child: Row(
                     children: <Widget>[Text("Detaylar"), Icon(Icons.arrow_right)],
@@ -63,7 +47,23 @@ class _IslemCardState extends State<IslemCard> {
             ],
           ),
           Divider(color: Colors.grey),
-          AutoSizeText(_durumMesaji(sepet.onay!, sepet.tamamlandi!, widget.durum)),
+          Padding(
+            padding: EdgeInsets.only(right: 10),
+            child: Row(
+              children: [
+                Expanded(
+                    child: Center(
+                  child:
+                      AutoSizeText(_durumMesaji(sepet.onay!, sepet.tamamlandi!, durum)),
+                )),
+                sepet.onay == true
+                    ? sepet.tamamlandi == true
+                        ? Icon(Icons.check_circle, color: Colors.green)
+                        : Icon(Icons.done, color: Colors.green)
+                    : Icon(Icons.hourglass_top, color: Colors.green),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -84,15 +84,38 @@ class _IslemCardState extends State<IslemCard> {
       "Kasım",
       "Aralık"
     ];
+    List<String> saatString = [
+      "00",
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09"
+    ];
 
     String tarih = createdAt.day.toString() +
         " " +
-        aylar[createdAt.month + 1] +
+        aylar[createdAt.month - 1] +
         " " +
         createdAt.year.toString();
 
-    String saat = createdAt.hour.toString();
-    String dakika = createdAt.minute == 0 ? "00" : createdAt.minute.toString();
+    String saat, dakika;
+
+    if (createdAt.hour >= 0 && createdAt.hour < 10) {
+      saat = saatString[createdAt.hour];
+    } else {
+      saat = createdAt.hour.toString();
+    }
+
+    if (createdAt.minute >= 0 && createdAt.minute < 10) {
+      dakika = saatString[createdAt.minute];
+    } else {
+      dakika = createdAt.minute.toString();
+    }
 
     return tarih + " " + saat + ":" + dakika;
   }
@@ -107,9 +130,6 @@ class _IslemCardState extends State<IslemCard> {
         }
       } else {
         mesaj = "Durum: Onaylanması Bekleniyor...";
-        if (tamamlandi) {
-          mesaj = "Durum: İsteğiniz Tamamlandı.";
-        }
       }
     } else {
       if (onay) {
@@ -119,9 +139,6 @@ class _IslemCardState extends State<IslemCard> {
         }
       } else {
         mesaj = "Durum: Onayınızı Bekleniyor...";
-        if (tamamlandi) {
-          mesaj = "Durum: İstek Tamamlandı.";
-        }
       }
     }
     return mesaj;

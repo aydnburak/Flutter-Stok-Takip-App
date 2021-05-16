@@ -17,6 +17,10 @@ class UserViewModel with ChangeNotifier {
 
   ViewState get state => _state;
 
+  set setKullanici(Kullanici? value) {
+    _kullanici = value;
+  }
+
   set state(ViewState value) {
     _state = value;
     notifyListeners();
@@ -39,15 +43,7 @@ class UserViewModel with ChangeNotifier {
   }
 
   Future<void> signOut() async {
-    try {
-      state = ViewState.Busy;
-      _kullanici = null;
-      await _userRepository.signOut();
-    } catch (e) {
-      debugPrint("signOut Hatası : " + e.toString());
-    } finally {
-      state = ViewState.Idle;
-    }
+    await _userRepository.signOut();
   }
 
   Future<void> signInWithEmailAndPassword(String uyeNo, String sifre) async {
@@ -67,8 +63,7 @@ class UserViewModel with ChangeNotifier {
         name, uyeNo, sifre, userID, ustUyeName, ustUyeEmail, ustUyeS);
   }
 
-  Future<void> createUserWithEmailAndPassword(
-      String uyeNo, String sifre, String name) async {
+  Future<void> createUserWithEmailAndPassword(String uyeNo, String sifre, String name) async {
     _kullanici = await _userRepository.createUserWithEmailAndPassword(uyeNo, sifre, name);
 
     if (_kullanici != null) {
@@ -83,7 +78,15 @@ class UserViewModel with ChangeNotifier {
     state = ViewState.Idle;
   }
 
-  Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
+  Future<void> uyeBildirimiGuncelle(String userID, bool deger, int index) async {
+    _uyelerim[index].bagimli = deger;
+    notifyListeners();
+
     await _userRepository.uyeBildirimiGuncelle(userID, deger);
+  }
+
+  Future<void> uyelerimGuncelle(String userID, String deger) async {
+    await _userRepository.uyelerimGuncelle(userID, deger);
+    notifyListeners();
   }
 }

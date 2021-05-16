@@ -1,8 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:stok_app/models/depo_urun_list_model.dart';
+import 'package:stok_app/models/depo_urun_model.dart';
 import 'package:stok_app/models/kullanici.dart';
 import 'package:stok_app/models/sepet_model.dart';
 import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/services/db_base.dart';
+
+import '../models/urun_model.dart';
 
 class FirebaseDbService implements DbBase {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -44,7 +48,7 @@ class FirebaseDbService implements DbBase {
             await _firestore.collection("products").where('tip1', isEqualTo: tip1).get();
 
         for (QueryDocumentSnapshot tekUrun in sonuc.docs) {
-          urunler.add(Urun.fromMap(tekUrun.data()!));
+          urunler.add(Urun.fromMap(tekUrun.data()));
         }
       } else {
         QuerySnapshot sonuc = await _firestore
@@ -54,7 +58,7 @@ class FirebaseDbService implements DbBase {
             .get();
 
         for (QueryDocumentSnapshot tekUrun in sonuc.docs) {
-          urunler.add(Urun.fromMap(tekUrun.data()!));
+          urunler.add(Urun.fromMap(tekUrun.data()));
         }
       }
     }
@@ -83,10 +87,8 @@ class FirebaseDbService implements DbBase {
     List<Urun> urunler = [];
     if (querySnapshot.docs.isNotEmpty) {
       for (DocumentSnapshot tekFavori in querySnapshot.docs) {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection('products')
-            .doc(tekFavori.data()!['urunID'])
-            .get();
+        DocumentSnapshot documentSnapshot =
+            await _firestore.collection('products').doc(tekFavori.data()!['urunID']).get();
 
         if (documentSnapshot.data() != null) {
           urunler.add(Urun.fromMap(documentSnapshot.data()!));
@@ -107,72 +109,9 @@ class FirebaseDbService implements DbBase {
     }
   }
 
-  @override
-  Future<void> addDepo(String userID, String urunID, int adet) async {
-    await _firestore.collection("depo").doc(userID + "--" + urunID).set({
-      'userID': userID,
-      'urunID': urunID,
-      'adet': adet,
-    });
-  }
-
-  @override
-  Future<void> deleteDepo(String userID, String urunID) async {
-    await _firestore.collection("depo").doc(userID + "--" + urunID).delete();
-  }
-
-  @override
-  Future<List<Urun>> getDepo(String userID) async {
-    QuerySnapshot querySnapshot =
-        await _firestore.collection('depo').where('userID', isEqualTo: userID).get();
-
-    List<Urun> urunler = [];
-    if (querySnapshot.docs.isNotEmpty) {
-      for (DocumentSnapshot tekDepoUrun in querySnapshot.docs) {
-        DocumentSnapshot documentSnapshot = await _firestore
-            .collection('products')
-            .doc(tekDepoUrun.data()!['urunID'])
-            .get();
-
-        if (documentSnapshot.data() != null) {
-          Urun urun = Urun.fromMap(documentSnapshot.data()!);
-          urun.adet = tekDepoUrun.data()!['adet'];
-          urunler.add(urun);
-        }
-      }
-    }
-    return urunler;
-  }
-
-  @override
-  Future<int> depoKontrol(Urun urun, String userID) async {
-    int kacTane = 0;
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection("depo").doc(userID + "--" + urun.urunID!).get();
-    if (documentSnapshot.data() != null) {
-      kacTane = documentSnapshot.data()!['adet'];
-    }
-
-    return kacTane;
-  }
-
-  Future<void> depoGuncelle(String userID, String urunID, int selectedIndex) async {
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection("depo").doc(userID + "--" + urunID).get();
-    if (documentSnapshot.data() != null) {
-      int kacTane = documentSnapshot.data()!['adet'];
-      await _firestore
-          .collection("depo")
-          .doc(userID + "--" + urunID)
-          .update({'adet': kacTane + selectedIndex});
-    }
-  }
-
   Future<List<Kullanici>> altUyeleriGetir(String userID) async {
-    QuerySnapshot querySnapshot = await _firestore
-        .collection("users")
-        .where('ustYetkiliID', isEqualTo: userID)
-        .get();
+    QuerySnapshot querySnapshot =
+        await _firestore.collection("users").where('ustYetkiliID', isEqualTo: userID).get();
     List<Kullanici> altUyeler = [];
     for (DocumentSnapshot kullanici in querySnapshot.docs) {
       altUyeler.add(Kullanici.fromMap(kullanici.data()!));
@@ -214,15 +153,12 @@ class FirebaseDbService implements DbBase {
           .doc()
           .set({'urunID': urun.urunID, 'adet': urun.adet});
     }
-    /*
-    DocumentSnapshot documentSnapshot =
-        await _firestore.collection("sepetler").doc(sepetId).get();
-    if (documentSnapshot.data() != null) {
-      print('var');
-    } else {
-      print('yok');
-    }
-     */
+
+    await _firestore.collection("bildirim").doc(ustUser.userID).set({'durum': true});
+  }
+
+  Future<void> bildirimiKapat(String userID) async {
+    await _firestore.collection("bildirim").doc(userID).set({'durum': false});
   }
 
   Future<List<Sepet>> getSepetlerim(String userID, bool durum) async {
@@ -230,12 +166,14 @@ class FirebaseDbService implements DbBase {
 
     QuerySnapshot querySnapshot;
     if (durum) {
+      print("user id 1 :" + userID);
       querySnapshot = await _firestore
           .collection("sepetler")
           .where('userID', isEqualTo: userID)
           .orderBy('createdAt', descending: true)
           .get();
     } else {
+      print("user id 1 :" + userID);
       querySnapshot = await _firestore
           .collection("sepetler")
           .where('ustUserID', isEqualTo: userID)
@@ -267,5 +205,161 @@ class FirebaseDbService implements DbBase {
 
   Future<void> islemSepetDelete(String sepetID) async {
     await _firestore.collection("sepetler").doc(sepetID).delete();
+    QuerySnapshot querySnapshot =
+        await _firestore.collection("sepetler").doc(sepetID).collection("sepetinUrunleri").get();
+    for (DocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      await _firestore
+          .collection("sepetler")
+          .doc(sepetID)
+          .collection("sepetinUrunleri")
+          .doc(documentSnapshot.id)
+          .delete();
+    }
+  }
+
+  Future<void> onayla(String sepetID) async {
+    await _firestore.collection("sepetler").doc(sepetID).update({'onay': true});
+  }
+
+  Future<void> tamamla(String sepetID) async {
+    await _firestore.collection("sepetler").doc(sepetID).update({'tamamlandi': true});
+  }
+
+  Future<void> addSepetim(Urun urun, String userID) async {
+    DocumentSnapshot gelenUrun = await _firestore
+        .collection("sepetim")
+        .doc(userID)
+        .collection("urunlerim")
+        .doc(urun.urunID)
+        .get();
+
+    if (gelenUrun.data() != null) {
+      await _firestore
+          .collection("sepetim")
+          .doc(userID)
+          .collection("urunlerim")
+          .doc(urun.urunID)
+          .update({'adet': urun.adet});
+    } else {
+      await _firestore
+          .collection("sepetim")
+          .doc(userID)
+          .collection("urunlerim")
+          .doc(urun.urunID)
+          .set(urun.toMap2());
+    }
+  }
+
+  Future<List<Urun>> getSepetim(String userID) async {
+    List<Urun> sepetimdekiUrunler = [];
+    QuerySnapshot gelenUrun =
+        await _firestore.collection("sepetim").doc(userID).collection("urunlerim").get();
+    for (DocumentSnapshot urun in gelenUrun.docs) {
+      if (urun.data() != null) {
+        sepetimdekiUrunler.add(Urun.fromMap2(urun.data()!));
+      }
+    }
+    return sepetimdekiUrunler;
+  }
+
+  Future<void> allSepetimiSil(String userID) async {
+    QuerySnapshot querySnapshot =
+        await _firestore.collection("sepetim").doc(userID).collection("urunlerim").get();
+
+    for (DocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      await _firestore
+          .collection("sepetim")
+          .doc(userID)
+          .collection("urunlerim")
+          .doc(documentSnapshot.id)
+          .delete();
+    }
+  }
+
+  Future<void> sepetUrunSil(String urunID, String userID) async {
+    await _firestore.collection("sepetim").doc(userID).collection("urunlerim").doc(urunID).delete();
+  }
+
+  Future<void> sepetUrunAdetGuncelle(String userID, String urunID, int adet) async {
+    await _firestore
+        .collection("sepetim")
+        .doc(userID)
+        .collection("urunlerim")
+        .doc(urunID)
+        .update({'adet': adet});
+  }
+
+  Future<void> uyelerimGuncelle(String userID, String deger) async {
+    await _firestore.collection("users").doc(userID).update({'rutbe': deger});
+  }
+
+  Future<void> addDepo1(DepoUrun depoUrun) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("stok")
+        .where('urunID', isEqualTo: depoUrun.urunID)
+        .where('userID', isEqualTo: depoUrun.userID)
+        .where('createdAt', isEqualTo: depoUrun.createdAt)
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      String id = querySnapshot.docs.first.id;
+      int adet = querySnapshot.docs.first.data()['adet'] + depoUrun.adet!;
+      _firestore.collection("stok").doc(id).update({'adet': adet});
+    } else {
+      await _firestore.collection("stok").doc().set(depoUrun.toMap());
+    }
+  }
+
+  Future<List<DepoUrunList>> getDepo1(String userID) async {
+    List<DepoUrunList> depoUrunListem = [];
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("stok")
+        .where('userID', isEqualTo: userID)
+        .orderBy('createdAt')
+        .get();
+
+    for (DocumentSnapshot documentSnapshot in querySnapshot.docs) {
+      DepoUrun gelenDepoUrun = DepoUrun.fromMap(documentSnapshot.data()!);
+      var sonuc =
+          depoUrunListem.where((element) => element.depoUrun.urunID == gelenDepoUrun.urunID);
+      if (sonuc.isNotEmpty) {
+        //urun varsa
+        int indexDegeri =
+            depoUrunListem.indexWhere((element) => element.depoUrun.urunID == gelenDepoUrun.urunID);
+        depoUrunListem[indexDegeri]
+            .tarihlerim
+            .add(TarihList(gelenDepoUrun.createdAt!, gelenDepoUrun.adet!));
+      } else {
+        //urun yoksa
+        DepoUrunList depoUrunList = DepoUrunList(gelenDepoUrun);
+        depoUrunList.tarihlerim.add(TarihList(gelenDepoUrun.createdAt!, gelenDepoUrun.adet!));
+        depoUrunListem.add(depoUrunList);
+      }
+    }
+    return depoUrunListem;
+  }
+
+  @override
+  Future<void> deleteDepo1(String userID, String urunID, DateTime createdAt) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("stok")
+        .where('urunID', isEqualTo: urunID)
+        .where('userID', isEqualTo: userID)
+        .where('createdAt', isEqualTo: createdAt)
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      _firestore.collection("stok").doc(querySnapshot.docs.first.id).delete();
+    }
+  }
+
+  Future<void> updateDepo1(String userID, String urunID, DateTime createdAt, int adet) async {
+    QuerySnapshot querySnapshot = await _firestore
+        .collection("stok")
+        .where('urunID', isEqualTo: urunID)
+        .where('userID', isEqualTo: userID)
+        .where('createdAt', isEqualTo: createdAt)
+        .get();
+    if (querySnapshot.docs.isNotEmpty) {
+      _firestore.collection("stok").doc(querySnapshot.docs.first.id).update({'adet': adet});
+    }
   }
 }

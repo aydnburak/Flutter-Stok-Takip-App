@@ -51,6 +51,20 @@ class Urun {
     };
   }
 
+  Map<String, dynamic> toMap2() {
+    return {
+      'urunID': urunID,
+      'adi': adi,
+      'urunKodu': urunKodu,
+      'photoURL': photoURL,
+      'aciklama1': aciklama1,
+      'aciklama2': aciklama2,
+      'tip1': tip1,
+      'tip2': tip2,
+      'adet': adet,
+    };
+  }
+
   Urun.fromMap(Map<String, dynamic> map)
       : urunID = map['urunID'],
         adi = map['adi'],
@@ -60,6 +74,17 @@ class Urun {
         aciklama2 = map['aciklama2'],
         tip1 = map['tip1'],
         tip2 = map['tip2'];
+
+  Urun.fromMap2(Map<String, dynamic> map)
+      : urunID = map['urunID'],
+        adi = map['adi'],
+        urunKodu = map['urunKodu'],
+        photoURL = map['photoURL'],
+        aciklama1 = map['aciklama1'],
+        aciklama2 = map['aciklama2'],
+        tip1 = map['tip1'],
+        tip2 = map['tip2'],
+        adet = map['adet'];
 
 /*
   UrunModel({this.name, this.kod, this.photoURL});

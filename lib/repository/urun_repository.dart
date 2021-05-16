@@ -1,4 +1,6 @@
 import 'package:stok_app/locator.dart';
+import 'package:stok_app/models/depo_urun_list_model.dart';
+import 'package:stok_app/models/depo_urun_model.dart';
 import 'package:stok_app/models/urun_model.dart';
 import 'package:stok_app/services/firestore_db_service.dart';
 
@@ -53,23 +55,19 @@ class UrunRepository {
     return await _firebaseDbService.getFavoriler(userID);
   }
 
-  Future<void> addDepo(String userID, String urunID, int adet) async {
-    await _firebaseDbService.addDepo(userID, urunID, adet);
+  Future<void> deleteDepo1(String userID, String urunID, DateTime createdAt) async {
+    await _firebaseDbService.deleteDepo1(userID, urunID, createdAt);
   }
 
-  Future<void> deleteDepo(String userID, String urunID) async {
-    await _firebaseDbService.deleteDepo(userID, urunID);
+  Future<void> updateDepo1(String userID, String urunID, DateTime createdAt, int adet) async {
+    await _firebaseDbService.updateDepo1(userID, urunID, createdAt, adet);
   }
 
-  Future<List<Urun>> getDepo(String userID) async {
-    return await _firebaseDbService.getDepo(userID);
+  Future<void> addDepo1(DepoUrun depoUrun) async {
+    await _firebaseDbService.addDepo1(depoUrun);
   }
 
-  Future<int> depoKontrol(Urun urun, String userID) async {
-    return await _firebaseDbService.depoKontrol(urun, userID);
-  }
-
-  Future<void> depoGuncelle(String userID, Urun yeniUrun, int selectedIndex) async {
-    await _firebaseDbService.depoGuncelle(userID, yeniUrun.urunID!, selectedIndex);
+  Future<List<DepoUrunList>> getDepo1(String userID) async {
+    return await _firebaseDbService.getDepo1(userID);
   }
 }

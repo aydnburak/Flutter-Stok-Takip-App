@@ -77,4 +77,8 @@ class UserRepository {
   Future<void> uyeBildirimiGuncelle(String userID, bool deger) async {
     await _firebaseDbService.uyeBildirimiGuncelle(userID, deger);
   }
+
+  Future<void> uyelerimGuncelle(String userID, String deger) async {
+    _firebaseDbService.uyelerimGuncelle(userID, deger);
+  }
 }

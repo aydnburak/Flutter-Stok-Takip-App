@@ -8,7 +8,7 @@ import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
-Future<void> main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   setupLocator();
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => IslemViewModel()),
       ],
       child: MaterialApp(
-        title: 'StokApp',
+        title: 'Stok Yönetimi',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.green,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/Components/drawer_menu.dart';
-import 'package:stok_app/Components/urun_card.dart';
+import 'package:stok_app/app/stok_screen/components/depo_urun_card.dart';
 import 'package:stok_app/models/categories_model.dart';
-import 'package:stok_app/models/urun_model.dart';
+import 'package:stok_app/models/depo_urun_list_model.dart';
 import 'package:stok_app/viewmodel/urun_viewmodel.dart';
 
 class StokPage extends StatefulWidget {
@@ -13,14 +13,13 @@ class StokPage extends StatefulWidget {
 
 class _StokPageState extends State<StokPage> {
   int selectedIndex = 0;
+
   @override
   void initState() {
     final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
     if (!_urunModel.depoOpen) {
       _urunModel.depoOpen = true;
-      _urunModel.getDepo();
-      print(_urunModel.depoOpen.toString());
-      print(_urunModel.depoUrunler.length.toString() + "depodaki ürün");
+      _urunModel.getDepo1();
     }
     super.initState();
   }
@@ -67,8 +66,7 @@ class _StokPageState extends State<StokPage> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     selectedIndex != index
-                        ? BoxShadow(
-                            color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
+                        ? BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
                         : BoxShadow(),
                   ]),
               child: Center(
@@ -105,18 +103,14 @@ class _StokPageState extends State<StokPage> {
 
   _listelemeBolumu() {
     final _urunModel = Provider.of<UrunViewModel>(context);
-    List<Urun> _depo = _depoyuVer(_urunModel.depoUrunler);
-    if (_depo.isNotEmpty) {
+    List<DepoUrunList> _depoUrunList = _depoyuVer(_urunModel.depoUrunList);
+    if (_depoUrunList.isNotEmpty) {
       return Expanded(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10),
-          child: GridView.builder(
-            itemCount: _depo.length,
-            gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.75,
-            ),
-            itemBuilder: (context, index) => UrunCard(urunModel: _depo[index]),
+          child: ListView.builder(
+            itemCount: _depoUrunList.length,
+            itemBuilder: (context, index) => DepoUrunCard(depoUrunList: _depoUrunList[index]),
           ),
         ),
       );
@@ -145,13 +139,13 @@ class _StokPageState extends State<StokPage> {
     }
   }
 
-  List<Urun> _depoyuVer(List<Urun> depoUrunler) {
-    List<Urun> donecekDepo = [];
+  List<DepoUrunList> _depoyuVer(List<DepoUrunList> depoUrunler) {
+    List<DepoUrunList> donecekDepo = [];
 
     if (selectedIndex != 0) {
-      for (Urun urun in depoUrunler) {
-        if (urun.tip1 == CategoriesModel.anaTip[selectedIndex - 1]) {
-          donecekDepo.add(urun);
+      for (DepoUrunList depoUrun in depoUrunler) {
+        if (depoUrun.depoUrun.tip1 == CategoriesModel.anaTip[selectedIndex - 1]) {
+          donecekDepo.add(depoUrun);
         }
       }
 

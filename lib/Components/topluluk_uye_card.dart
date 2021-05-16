@@ -1,25 +1,14 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stok_app/models/kullanici.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
 
-class ToplulukUyeCard extends StatefulWidget {
+class ToplulukUyeCard extends StatelessWidget {
   final Kullanici user;
+  final int index;
 
-  ToplulukUyeCard({required this.user});
-
-  @override
-  _ToplulukUyeCardState createState() => _ToplulukUyeCardState();
-}
-
-class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
-  late Kullanici _user;
-
-  @override
-  void initState() {
-    _user = widget.user;
-    super.initState();
-  }
+  ToplulukUyeCard({required this.user, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +16,7 @@ class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
     return Container(
       margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(10),
-      height: 100,
+      height: 130,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(15),
@@ -50,16 +39,45 @@ class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    _user.name!,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                  AutoSizeText(user.name!,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900)),
+                  Row(
+                    children: [
+                      Text(
+                        "Rütbe: ",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                      user.rutbe != "Admin"
+                          ? DropdownButton(
+                              value: user.rutbe,
+                              items: [
+                                "Üye",
+                                "Kariyer Üye(%10)",
+                                "Kariyer Üye(%15)",
+                                "Kariyer Üye(%21)",
+                                "Kariyer Üye(%27)",
+                                "Öncü",
+                                "Bronz Öncü",
+                                "Gümüş Öncü",
+                                "Altın Öncü",
+                                "Platin Öncü"
+                              ]
+                                  .map((label) => DropdownMenuItem(
+                                        child: Text(label),
+                                        value: label,
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                _userModel.uyelerim[index].rutbe = value.toString();
+                                _userModel.uyelerimGuncelle(user.userID!, value.toString());
+                              },
+                            )
+                          : Container(),
+                    ],
                   ),
                   Text(
-                    "Rütbe: " + _user.rutbe!,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-                  ),
-                  Text(
-                    "Üye No: " + _user.uyeNo!,
+                    "Üye No: " + user.uyeNo!,
                     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -75,12 +93,9 @@ class _ToplulukUyeCardState extends State<ToplulukUyeCard> {
                 children: <Widget>[
                   Text("İstek Bildirimi"),
                   Switch(
-                    value: _user.bagimli!,
+                    value: user.bagimli!,
                     onChanged: (bool deger) {
-                      _userModel.uyeBildirimiGuncelle(_user.userID!, deger);
-                      setState(() {
-                        _user.bagimli = deger;
-                      });
+                      _userModel.uyeBildirimiGuncelle(user.userID!, deger, index);
                     },
                   ),
                 ],

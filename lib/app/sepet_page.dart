@@ -14,6 +14,16 @@ class SepetPage extends StatefulWidget {
 
 class _SepetPageState extends State<SepetPage> {
   @override
+  void initState() {
+    final _islemModel = Provider.of<IslemViewModel>(context, listen: false);
+    if (!_islemModel.sepetimgeldimi) {
+      print("db den sepetiniz getiriliyor");
+      _islemModel.getSepetim();
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final _islemModel = Provider.of<IslemViewModel>(context);
     return Scaffold(
@@ -44,7 +54,7 @@ class _SepetPageState extends State<SepetPage> {
             childAspectRatio: 2.5,
           ),
           itemBuilder: (context, index) =>
-              SepetUrunCard(urun: _islemModel.sepetim[index], index: index),
+              SepetUrunCard(urun: _islemModel.sepetim[index]),
         ),
       );
     } else {
@@ -59,7 +69,7 @@ class _SepetPageState extends State<SepetPage> {
                 size: 120,
               ),
               AutoSizeText(
-                "Sepetinizde Ürün Yok.",
+                "Sepetinizde Ürün Yok veya Yükleniyor...",
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 36),
               )
@@ -93,17 +103,22 @@ class _SepetPageState extends State<SepetPage> {
             ],
           ),
           Spacer(),
-          ElevatedButton(
-              onPressed: () {
-                try {
-                  _islemModel.sepetSave();
-                } catch (e) {} finally {
-                  toastMesaj('İsteğiniz Gönderildi...');
-                  _islemModel.allDeleteSepetim();
-                  setState(() {});
-                }
-              },
-              child: Text("İstek Gönder"))
+          _userModel.kullanici!.bagimli == true
+              ? ElevatedButton(
+                  onPressed: () {
+                    try {
+                      _islemModel.sepetSave();
+                    } catch (e) {} finally {
+                      toastMesaj('İsteğiniz Gönderildi...');
+                      _islemModel.allDeleteSepetim();
+                      //setState(() {});
+                    }
+                  },
+                  child: Text("İstek Gönder"))
+              : AutoSizeText(
+                  "Yetkiliniz İstek Hakkınızı Pasif Yaptı.",
+                  style: TextStyle(color: Colors.green),
+                ),
         ],
       ),
     );

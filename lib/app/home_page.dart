@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
+  //int selectedIndex = 0;
   String? selectedAnaTip = "TEMİZLİK GRUBU";
   String? selectedFilter;
 
@@ -22,11 +22,13 @@ class _HomePageState extends State<HomePage> {
     final _urunModel = Provider.of<UrunViewModel>(context, listen: false);
     final _islemModel = Provider.of<IslemViewModel>(context, listen: false);
     print("home page acıldı ");
+
     if (!_urunModel.homeOpen) {
       _urunModel.homeOpen = true;
       _urunModel.getFavoriler();
       _islemModel.getUstYetkili();
     }
+
     super.initState();
   }
 
@@ -41,15 +43,9 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.shopping_basket_outlined),
+            icon: Icon(Icons.shopping_cart_outlined),
             onPressed: () {
-              setState(() {});
-
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => SepetPage(),
-                ),
-              );
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SepetPage()));
             },
           ),
         ],
@@ -84,7 +80,7 @@ class _HomePageState extends State<HomePage> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              selectedIndex = index;
+              _urunModel.selectedIndex = index;
               selectedAnaTip = CategoriesModel.anaTip[index];
               selectedFilter = null;
               _urunModel.getUrunler(selectedAnaTip, selectedFilter);
@@ -93,13 +89,12 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.only(left: 5, right: 5),
               margin: EdgeInsets.only(left: 10, right: 10, top: 8, bottom: 8),
               decoration: BoxDecoration(
-                  color: selectedIndex == index ? Colors.green : Colors.white,
+                  color: _urunModel.selectedIndex == index ? Colors.green : Colors.white,
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
-                    selectedIndex != index
-                        ? BoxShadow(
-                            color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
+                    _urunModel.selectedIndex != index
+                        ? BoxShadow(color: Colors.grey, blurRadius: 10, offset: Offset(0, -1))
                         : BoxShadow(),
                   ]),
               child: Center(
@@ -107,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                 CategoriesModel.categoriesModel[index].title!,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: selectedIndex == index ? Colors.white : Colors.black54),
+                    color: _urunModel.selectedIndex == index ? Colors.white : Colors.black54),
               )),
             ),
           );
@@ -135,7 +130,7 @@ class _HomePageState extends State<HomePage> {
           ),
           PopupMenuButton(
             itemBuilder: (context) {
-              return CategoriesModel.categoriesModel[selectedIndex].filterList!
+              return CategoriesModel.categoriesModel[_urunModel.selectedIndex].filterList!
                   .map((filtre) => PopupMenuItem(
                         child: Text(filtre!),
                         value: filtre,

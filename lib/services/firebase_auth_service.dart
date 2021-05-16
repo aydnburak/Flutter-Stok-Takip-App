@@ -6,6 +6,7 @@ class FirebaseAuthService {
 
   Future<Kullanici?> currentUser() async {
     User? user = _firebaseAuth.currentUser;
+
     if (user != null) {
       return Kullanici(userID: user.uid);
     } else {

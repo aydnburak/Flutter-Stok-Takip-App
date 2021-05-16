@@ -3,20 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:stok_app/Components/islem_card.dart';
 import 'package:stok_app/viewmodel/islem_viewmodel.dart';
 
-class IstekGelenPage extends StatefulWidget {
-  @override
-  _IstekGelenPageState createState() => _IstekGelenPageState();
-}
-
-class _IstekGelenPageState extends State<IstekGelenPage> {
-  @override
-  void initState() {
-    print("istek Gelen Page Açıldı");
-    super.initState();
-  }
-
+class IstekGelenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("istek Gelen Page Açıldı");
     final _islemModel = Provider.of<IslemViewModel>(context);
 
     if (_islemModel.isteklerGeldimi) {

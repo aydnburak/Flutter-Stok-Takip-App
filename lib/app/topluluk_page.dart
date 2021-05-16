@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stok_app/Components/drawer_menu.dart';
 import 'package:stok_app/Components/topluluk_uye_card.dart';
 import 'package:stok_app/app/topluluk_add_page.dart';
 import 'package:stok_app/viewmodel/user_viewmodel.dart';
@@ -25,6 +26,8 @@ class _ToplulukPageState extends State<ToplulukPage> {
   Widget build(BuildContext context) {
     final _userModel = Provider.of<UserViewModel>(context);
     return Scaffold(
+      drawer: DrawerMenu(),
+      drawerEnableOpenDragGesture: false,
       appBar: AppBar(
         title: Text("Topluluk"),
       ),
@@ -45,8 +48,10 @@ class _ToplulukPageState extends State<ToplulukPage> {
               ? Expanded(
                   child: ListView.builder(
                     itemCount: _userModel.uyelerim.length,
-                    itemBuilder: (context, index) =>
-                        ToplulukUyeCard(user: _userModel.uyelerim[index]),
+                    itemBuilder: (context, index) => ToplulukUyeCard(
+                      user: _userModel.uyelerim[index],
+                      index: index,
+                    ),
                   ),
                 )
               : _kullaniciYokUI(),
