@@ -1,9 +1,8 @@
 # Stok App
 
-Flutter Web Kullanarak hazırladıgım Projem:
+Flutter ile geliştirmiş olduğum (Stok Takip Uygulaması) projem.Ek olarak favorilere ekleme,alt üye seviye yönetimi,sipariş istegi yönetimi gibi bir çok özelligi var.
 
-Yeni İngilizce Ögrenen Kişiler İçin Ögrendikleri Yeni Kelimeleri Ekleyerek Kendilerini Test Etmeleri İcin Hazırlanmış bir Web Uygulaması.
-Kullanıcılar Sisteme Kayıt Olarak Verilerini Saklayıp istedikleri zaman kendilerini test edebiliyorlar.  
+** Firebase yardımı ile hazırlamış oldugum backend sayesinde Gerçek veriler girilmesi halinde hayata geçirilebilir durumda.
 
 <p align="center">
   <img height="550" align="center" src="https://user-images.githubusercontent.com/55949311/120933460-ecb3cb00-c702-11eb-872b-455136e10e62.gif" alt="aydnburak"/>
