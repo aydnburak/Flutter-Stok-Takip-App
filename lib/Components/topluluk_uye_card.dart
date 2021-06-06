@@ -32,7 +32,7 @@ class ToplulukUyeCard extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 8,
             child: Container(
               padding: EdgeInsets.only(left: 10, right: 10, top: 3, bottom: 3),
               child: Column(
