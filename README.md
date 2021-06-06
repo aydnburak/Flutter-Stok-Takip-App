@@ -5,7 +5,7 @@ Flutter Web Kullanarak hazırladıgım Projem:
 Yeni İngilizce Ögrenen Kişiler İçin Ögrendikleri Yeni Kelimeleri Ekleyerek Kendilerini Test Etmeleri İcin Hazırlanmış bir Web Uygulaması.
 Kullanıcılar Sisteme Kayıt Olarak Verilerini Saklayıp istedikleri zaman kendilerini test edebiliyorlar.  
 
-![englishword](https://user-images.githubusercontent.com/55949311/117519551-aad12100-afac-11eb-843e-027724f82099.gif)
+![stok-app-tanitim](https://user-images.githubusercontent.com/55949311/120933460-ecb3cb00-c702-11eb-872b-455136e10e62.gif)
 
 ### dependencies:
 ```
