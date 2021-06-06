@@ -9,10 +9,17 @@ Kullanıcılar Sisteme Kayıt Olarak Verilerini Saklayıp istedikleri zaman kend
 
 ### dependencies:
 ```
+ - cupertino_icons: 
  - get_it:
- - provider:
- - auto_size_text:
- - dio: 
+ - firebase_core: 
+ - firebase_auth: 
+ - cloud_firestore: 
+ - google_fonts: 
+ - provider: 
+ - auto_size_text: 
+ - extended_image: 
+ - fluttertoast: 
+ - date_field: 
+ - intl: 
 ```
-
 
